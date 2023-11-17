@@ -7,6 +7,17 @@
       1 => 'Arcanedev\\LogViewer\\Providers\\DeferredServicesProvider',
     ),
   ),
+  'beyondcode/laravel-websockets' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'BeyondCode\\LaravelWebSockets\\WebSocketsServiceProvider',
+    ),
+    'aliases' => 
+    array (
+      'WebSocketRouter' => 'BeyondCode\\LaravelWebSockets\\Facades\\WebSocketRouter',
+    ),
+  ),
   'joedixon/laravel-translation' => 
   array (
     'providers' => 

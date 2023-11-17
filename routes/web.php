@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\TestEventController;
 use App\Http\Controllers\ToDoController;
 use App\Http\Livewire\AccessControl;
 use App\Http\Livewire\Chatting;
@@ -79,7 +80,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/add_todo', [ToDoController::class, 'store'])->name('add_todo');
 
 
-
+Route::get('/test', [TestEventController::class, 'testEvents']);
 
 
 });
