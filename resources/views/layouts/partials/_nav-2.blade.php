@@ -164,25 +164,25 @@ if (Auth::user()->type == 'Admin') {
 
                     <x-menu-divider text="User" />
                     <x-menu text="{{ __('Project') }}" url="{{ route('project') }}" />
-                    
+
 
                     @if (request()->is('project/*'))
                     <x-menu-divider text="Project" />
-                    
+
 
 
                     <?php
-                    print($s_active_project->id);
-                    
-                    
+                    // print($s_active_project->id);
 
 
- 
+
+
+
 
                     if (Auth::user()->type == 'User') {
                         // $user_module = DB::select('SELECT * FROM project_wise_user_accesses WHERE module_id = 5 && user_id = [$loggedin_id]');
                         $query_user = "SELECT * FROM project_wise_user_accesses WHERE module_id = 5 AND user_id = ? AND project_id =?";
-                        $user_module = DB::select($query_user, [$loggedin_id, $s_active_project -> id]);
+                        $user_module = DB::select($query_user, [$loggedin_id, $s_active_project->id]);
                         foreach ($user_module as $r1_user) {
                             $module_id_user = $r1_user->module_id;
                             $create_user = $r1_user->create;
@@ -194,21 +194,19 @@ if (Auth::user()->type == 'Admin') {
                     if (Auth::user()->type == 'User') {
                         // $todo_module = DB::select('SELECT * FROM project_wise_user_accesses WHERE module_id = 6 && user_id = $loggedin_id');
                         $query_todo = "SELECT * FROM project_wise_user_accesses WHERE module_id = 6 AND user_id = ? AND project_id =?";
-                        $todo_module = DB::select($query_todo, [$loggedin_id, $s_active_project -> id]);
+                        $todo_module = DB::select($query_todo, [$loggedin_id, $s_active_project->id]);
                         foreach ($todo_module as $r1_todo) {
                             $module_id_todo = $r1_todo->module_id;
                             $create_todo = $r1_todo->create;
                             $read_todo = $r1_todo->read;
                         }
-                        
-                        
                     }
 
 
                     if (Auth::user()->type == 'User') {
                         // $taskgroup_module = DB::select('SELECT * FROM project_wise_user_accesses WHERE module_id = 7 && user_id = $loggedin_id');
                         $query_taskgroup = "SELECT * FROM project_wise_user_accesses WHERE module_id = 7 AND user_id = ? AND project_id =?";
-                        $taskgroup_module = DB::select($query_taskgroup, [$loggedin_id, $s_active_project -> id]);
+                        $taskgroup_module = DB::select($query_taskgroup, [$loggedin_id, $s_active_project->id]);
                         foreach ($taskgroup_module as $r1_taskgroup) {
                             $module_id_taskgroup = $r1_taskgroup->module_id;
                             $create_taskgroup = $r1_taskgroup->create;
@@ -238,14 +236,12 @@ if (Auth::user()->type == 'Admin') {
 
 
 
-
-
-
+                    
                     @if($s_active_project && ($Access_permission=='Super Admin' || $Access_permission=='Admin' || $read_user == '1'))
                     <x-menu text="{{ __('User') }}" url="{{ route('project.user', $s_active_project) }}" />
                     @endif
 
-                    
+
                     @if($s_active_project && ($Access_permission=='Super Admin' || $Access_permission=='Admin' || $read_todo == '1'))
                     <x-menu text="{{ __('To Do') }}" url="{{ route('project.todo', $s_active_project) }}" />
                     @endif

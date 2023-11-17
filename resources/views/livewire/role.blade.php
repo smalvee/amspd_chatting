@@ -85,16 +85,17 @@
                         <h4 class="mb-1"> Access </h4>
                     </div>
                     <div class="ps-4 pe-4 pb-0">
-                        <form wire:submit.prevent='submit'>
+                        <form wire:submit.prevent='update'>
                             <div class="mb-3">
                                 <label class="col-form-label" for="name">Role</label>
+                                <input class="form-control" id="role_id" type="hidden" wire:model="role_id" />
                                 <input class="form-control" id="name" type="text" wire:model="name" />
                                 @error('name') <x-alert type="danger" :$message /> @enderror
                                 @error('permissions') <br> <x-alert type="danger" :$message /> @enderror
                             </div>
                             <div class="mb-3 text-center">
-                                <button class="btn btn-secondary" id="close_button" type="button" data-bs-dismiss="modal">Close</button>
-                                <button class="btn btn-primary" type="submit">Submit </button>
+                                <button class="btn btn-secondary" id="close_button_u" type="button" data-bs-dismiss="modal">Close</button>
+                                <button class="btn btn-primary" type="submit">Update </button>
                             </div>
                         </form>
                     </div>
@@ -114,6 +115,14 @@
     window.addEventListener('closeModal', event => {
         console.log('Close modal event triggered');
         var button = document.getElementById("close_button");
+        button.click();
+
+    });
+</script>
+<script>
+    window.addEventListener('closeModalu', event => {
+        console.log('Close modal event triggered');
+        var button = document.getElementById("close_button_u");
         button.click();
 
     });

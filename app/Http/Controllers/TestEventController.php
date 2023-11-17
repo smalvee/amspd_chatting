@@ -9,6 +9,6 @@ class TestEventController extends Controller
 {
     function testEvents()
     {
-        event(new TestEvent);
+        return view('test');
     }
 }

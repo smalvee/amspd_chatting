@@ -204,10 +204,10 @@ if (Auth::user()->name == 'Super Admin') {
                         <h4 class="mb-1"> Project </h4>
                     </div>
                     <div class="ps-4 pe-4 pb-0">
-                        <form wire:submit.prevent='update_project_modal'>
+                        <form wire:submit.prevent='update_project_modal'> 
 
                             <div class="mb-3">
-                                <input class="form-control" id="p_id" type="text" wire:model="p_id" />
+                                <input class="form-control" id="p_id" type="hidden" wire:model="p_id" />
                                 <label class="col-form-label" for="en_name">Name (en):</label>
                                 <input class="form-control" id="en_name" type="text" wire:model="en_name" />
                                 @error('en_name') <x-alert type="danger" :$message /> @enderror

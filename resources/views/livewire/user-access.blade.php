@@ -1,3 +1,7 @@
+<?php
+
+use Illuminate\Support\Facades\DB;
+?>
 <div>
     <x-breadcrumb title="{{ __('Access') }}" @admin btn="1" @endadmin />
     <div class="row g-3 mb-3">
@@ -23,25 +27,81 @@
                             <thead>
                                 <tr>
                                     <th scope="col">#</th>
-                                    <th scope="col">User ID</th>                                   
+                                    <th scope="col">User ID</th>
+                                    <th scope="col">Project Name(ID)</th>
+                                    <th scope="col">status</th>
+                                    <th scope="col">Create</th>
+                                    <th scope="col">Read</th>
+                                    <th scope="col">Update</th>
+                                    <th scope="col">Delete</th>
                                     <th scope="col">Action</th>
-                                    
+
                                 </tr>
                             </thead>
                             <tbody>
-                            @foreach($users as $info)
+                                @foreach($users as $info)
                                 <tr class="align-middle">
                                     <td class="text-nowrap"> {{ $loop->iteration }} </td>
+                                    <td class="text-nowrap">{{$info->user_id}}</td>
+
+                                    <?php
+
+                                    $q1 = "SELECT name FROM projects WHERE id = $info->project_id";
+                                    $p_name = DB::select($q1);
+
+                                    foreach ($p_name as $p)
+                                        $p->name;
+
+                                    $jsonString = $p->name;
+                                    $data = json_decode($jsonString, true);
+
+                                    if (isset($data['en'])) {
+                                        $p_name = $data['en'];
+                                    }
+                                    ?>
+
+                                    <td class="text-nowrap">{{$p_name}}({{$info->project_id}})</td>
+
+                                    <td class="text-nowrap">{{$info->status}}</td>
+
                                     <td class="text-nowrap">
-                                    {{$info->user_id}}
+                                        <?php
+                                        if ($info->create == 1) { ?>
+                                            <i class="fa fa-check" aria-hidden="true"></i>
+                                        <?php } else print('----')
+                                        ?>
                                     </td>
-                                   
+
+                                    <td class="text-nowrap">
+                                        <?php
+                                        if ($info->read == 1) { ?>
+                                            <i class="fa fa-check" aria-hidden="true"></i>
+                                        <?php } else print('----')
+                                        ?>
+                                    </td>
+
+                                    <td class="text-nowrap">
+                                        <?php
+                                        if ($info->update == 1) { ?>
+                                            <i class="fa fa-check" aria-hidden="true"></i>
+                                        <?php } else print('----')
+                                        ?>
+                                    </td>
+
+                                    <td class="text-nowrap">
+                                        <?php
+                                        if ($info->delete == 1) { ?>
+                                            <i class="fa fa-check" aria-hidden="true"></i>
+                                        <?php } else print('----')
+                                        ?>
+                                    </td>
+
                                     <td class="text-nowrap">
                                         <!-- <button class="btn btn-falcon-primary btn-sm">Edit</button>  -->
                                         <button type="button" wire:click="Edit_modal({{$info->id}})" class="btn btn-falcon-primary btn-sm" data-bs-toggle="modal" data-bs-target="#update_modal">Edit</button>
                                         <button class="btn btn-falcon-danger btn-sm" onclick="confirm('Are you sure?') || event.stopImmediatePropagation()" wire:click="delete('{{ $info->id }}')">Delete</button>
                                     </td>
-                                   
+
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -50,7 +110,7 @@
                 </div>
 
 
-                
+
             </div>
         </div>
     </div>
@@ -159,7 +219,7 @@
 
 
 
-    {{-- edit || Update Modal --}}
+    {{-- Update || Update Modal --}}
     @admin
     <div wire:ignore.self class="modal fade" id="update_modal">
         <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 800px">
@@ -172,30 +232,46 @@
                         <h4 class="mb-1"> Access </h4>
                     </div>
                     <div class="ps-4 pe-4 pb-0">
-                        <form wire:submit.prevent='submit'>
+                        <form wire:submit.prevent='update'>
                             <div class="mb-3">
-                                <label class="col-form-label" for="name">Role</label>
-                                <input class="form-control" id="name" type="text" wire:model="name" />
-                                @error('name') <x-alert type="danger" :$message /> @enderror
-                                @error('permissions') <br> <x-alert type="danger" :$message /> @enderror
+                                <label for="organizerSingle">Select User</label>
+                                <input class="form-control" id="a_id" type="hidden" wire:model="a_id" />
+                                <select class="form-select js-choice" id="user_id" wire:model="user_id" size="1" name="organizerSingle" data-options='{"removeItemButton":true,"placeholder":true}' disabled>
+                                    <option value="">User List</option>
+                                    @foreach($all_users as $a_u)
+                                    <option value="{{$a_u->id}}">{{$a_u->email}}({{$a_u->id}})</option>
+                                    @endforeach
+                                </select>
+                                @error('user_id') <x-alert type="danger" :$message /> @enderror
+
+
+                                <label for="organizerSingle">Select Project</label>
+                                <select class="form-select js-choice" id="project_id" wire:model="project_id" size="1" name="organizerSingle" data-options='{"removeItemButton":true,"placeholder":true}' disabled>
+                                    <option value="">User List</option>
+                                    @foreach($all_projects as $pro)
+                                    <option value="{{$pro->id}}">{{$pro->name}}</option>
+                                    @endforeach
+                                </select>
+                                @error('project_id') <x-alert type="danger" :$message /> @enderror
                             </div>
                             <div class="mb-3">
-                                <label class="col-form-label" for="permission_as">Permission As</label>
+                                <label class="col-form-label" for="default_access">Permission As</label>
                                 <!-- <input class="form-control" id="permission_as" type="text" wire:model="permission_as" /> -->
-                                <select class="form-control" id="permission_as" type="text" wire:model="permission_as">
+                                <select class="form-control" id="default_access" type="text" wire:model="default_access">
                                     <option>Selcet One</option>
                                     <option value="Admin">Admin</option>
                                     <option value="Super Admin">Super Admin</option>
                                 </select>
                                 @error('permission_as') <x-alert type="danger" :$message /> @enderror
-                                @error('permissions') <br> <x-alert type="danger" :$message /> @enderror
+
                             </div>
                             <div class="mb-3">
+                                <label class="col-form-label" for="Custom_permission">Customize Permission</label>
+
                                 <table class="table table-hover table-striped overflow-hidden">
                                     <thead>
                                         <tr>
-                                            <th>#</th>
-                                            <th>Module</th>
+
                                             <th>Create</th>
                                             <th>Read</th>
                                             <th>Update</th>
@@ -204,98 +280,26 @@
                                     </thead>
                                     <tbody>
                                         <tr class="align-middle">
-                                            <td class="text-nowrap"> 1 </td>
-                                            <td class="text-nowrap">User</td>
+
+
                                             <td>
                                                 <div class="form-check form-switch form-check-inline">
-                                                    <input class="form-check-input" type="checkbox" wire:model='permissions.user.create'>
+                                                    <input class="form-check-input" type="checkbox" id="create" wire:model='create'>
                                                 </div>
                                             </td>
                                             <td>
                                                 <div class="form-check form-switch form-check-inline">
-                                                    <input class="form-check-input" type="checkbox" wire:model='permissions.user.read'>
+                                                    <input class="form-check-input" type="checkbox" id="read" wire:model='read'>
                                                 </div>
                                             </td>
                                             <td>
                                                 <div class="form-check form-switch form-check-inline">
-                                                    <input class="form-check-input" type="checkbox" wire:model='permissions.user.update'>
+                                                    <input class="form-check-input" type="checkbox" id="update" wire:model='update'>
                                                 </div>
                                             </td>
                                             <td>
                                                 <div class="form-check form-switch form-check-inline">
-                                                    <input class="form-check-input" type="checkbox" wire:model='permissions.user.delete'>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr class="align-middle">
-                                            <td class="text-nowrap"> 2 </td>
-                                            <td class="text-nowrap">To Do List</td>
-                                            <td>
-                                                <div class="form-check form-switch form-check-inline">
-                                                    <input class="form-check-input" type="checkbox" wire:model='permissions.todo.create'>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="form-check form-switch form-check-inline">
-                                                    <input class="form-check-input" type="checkbox" wire:model='permissions.todo.read'>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="form-check form-switch form-check-inline">
-                                                    <input class="form-check-input" type="checkbox" wire:model='permissions.todo.update'>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="form-check form-switch form-check-inline">
-                                                    <input class="form-check-input" type="checkbox" wire:model='permissions.todo.delete'>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr class="align-middle">
-                                            <td class="text-nowrap"> 3 </td>
-                                            <td class="text-nowrap">To Do Category</td>
-                                            <td>
-                                                <div class="form-check form-switch form-check-inline">
-                                                    <input class="form-check-input" type="checkbox" wire:model='permissions.todo-category.create'>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="form-check form-switch form-check-inline">
-                                                    <input class="form-check-input" type="checkbox" wire:model='permissions.todo-category.read'>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="form-check form-switch form-check-inline">
-                                                    <input class="form-check-input" type="checkbox" wire:model='permissions.todo-category.update'>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="form-check form-switch form-check-inline">
-                                                    <input class="form-check-input" type="checkbox" wire:model='permissions.todo-category.delete'>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr class="align-middle">
-                                            <td class="text-nowrap"> 4 </td>
-                                            <td class="text-nowrap">Event</td>
-                                            <td>
-                                                <div class="form-check form-switch form-check-inline">
-                                                    <input class="form-check-input" type="checkbox" wire:model='permissions.event.create'>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="form-check form-switch form-check-inline">
-                                                    <input class="form-check-input" type="checkbox" wire:model='permissions.event.read'>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="form-check form-switch form-check-inline">
-                                                    <input class="form-check-input" type="checkbox" wire:model='permissions.event.update'>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="form-check form-switch form-check-inline">
-                                                    <input class="form-check-input" type="checkbox" wire:model='permissions.event.delete'>
+                                                    <input class="form-check-input" type="checkbox" id="delete" wire:model='delete'>
                                                 </div>
                                             </td>
                                         </tr>
@@ -303,7 +307,7 @@
                                 </table>
                             </div>
                             <div class="mb-3 text-center">
-                                <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Close</button>
+                                <button class="btn btn-secondary" onclick="empty()" id="close_button_u" type="button" data-bs-dismiss="modal">Close</button>
                                 <button class="btn btn-primary" type="submit">Submit </button>
                             </div>
                         </form>
@@ -321,10 +325,37 @@
 
 
 <script>
-    window.addEventListener('closeModal', event => {
+    window.addEventListener('closeModalc', event => {
         console.log('Close modal event triggered');
         var button = document.getElementById("close_button");
         button.click();
 
     });
+</script>
+<script>
+    window.addEventListener('closeModalu', event => {
+        console.log('Close modal event triggered');
+        var button = document.getElementById("close_button_u");
+        button.click();
+
+    });
+</script>
+<script>
+    function empty() {
+        var inputFields = document.querySelectorAll('input');
+        inputFields.forEach(function(inputField) {
+            inputField.value = '';
+        });
+
+        var inputFields = document.querySelectorAll('select');
+        inputFields.forEach(function(inputField) {
+            inputField.value = '';
+        });
+
+        var checkboxFields = document.querySelectorAll('input[type="checkbox"]');
+        checkboxFields.forEach(function(checkboxField) {
+            checkboxField.checked = false;
+        });
+
+    }
 </script>

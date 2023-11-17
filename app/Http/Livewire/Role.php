@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class Role extends Component
 {
-    public $name;
+    public $name, $role_id;
     public function render()
     {
 
@@ -19,7 +19,7 @@ class Role extends Component
         $read = NULL;
         $update = NULL;
         $delete = NULL;
-        $access_permission = Auth::user()->type ?? null;
+        $access_permission = Auth::user()->type ?? null; 
         $results2 = NULL;
         $results1 = NULL;
         $results2 = NULL;
@@ -63,12 +63,38 @@ class Role extends Component
     {
         $access = RoleWisePermission::findOrFail($id);
         if ($access) {
+            $this->role_id = $access->id;
             $this->name = $access->role;
         } else {
             return redirect()->to('/role');
         }
 
         // dd($this->name);
+    }
+
+    public function update()
+    {
+        $this->validate([
+            'name' => 'required',
+        ]);
+
+        $result = RoleWisePermission::where('id', $this->role_id)->update([
+            'role' => $this->name,
+
+        ]);
+
+        $this->reset([
+            'name',
+           
+        ]);
+
+        if ($result) {
+            $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => 'Access successfully Updated !']);
+            $this->dispatchBrowserEvent('closeModalu');
+        } else {
+            $this->dispatchBrowserEvent('alert', ['type' => 'danger',  'message' => 'Something Wrong !']);
+            $this->dispatchBrowserEvent('closeModalu');
+        }
     }
 
 
