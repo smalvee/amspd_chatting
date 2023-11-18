@@ -11,6 +11,7 @@ class Module extends Model
 
     protected $fillable = [
         'module_name',
-        'created_by'
+        'created_by',
+        'status'
     ];
 }

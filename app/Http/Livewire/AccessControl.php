@@ -14,7 +14,7 @@ class AccessControl extends Component
     {
         return view('livewire.access-control', [
             'roles' => RoleWisePermission::pluck('role')->unique(),
-            'modules' => Module::all()
+            'modules' => Module::where('status', 1)->orwhere('status', 2)->get()
         ])->extends('layouts.app');
     }
 

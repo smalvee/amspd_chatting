@@ -186,7 +186,7 @@
 </div>
 
 @push('scripts')
-<script>
+<!-- <script>
     document.addEventListener('DOMContentLoaded', function() {
         Livewire.on('reloadPage', function() {
             // Reload the page when the 'reloadPage' event is received
@@ -204,5 +204,5 @@
         // Set the input field's value to "A"
         inputField.value = "A";
     });
-</script>
+</script> -->
 @endpush

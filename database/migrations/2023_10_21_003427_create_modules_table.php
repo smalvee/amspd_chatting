@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('module_name');
             $table->string('created_by');
+            $table->string('status');
             $table->timestamps();
         });
     }

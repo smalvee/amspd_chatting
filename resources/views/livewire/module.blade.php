@@ -76,7 +76,7 @@ if (Auth::user()->name == 'Super Admin') {
 
 
                                         <?php
-                                        if ($module->status == 'Active') { ?>
+                                        if ($module->status == 1) { ?>
                                             <i class="fa fa-check" aria-hidden="true"></i>
                                         <?php } else print('----')
                                         ?>
@@ -91,7 +91,7 @@ if (Auth::user()->name == 'Super Admin') {
                                     <td class="text-nowrap">
 
                                         <?php
-                                        if ($module->status == 'Inactive') { ?>
+                                        if ($module->status == 0) { ?>
                                             <i class="fa fa-check" aria-hidden="true"></i>
                                         <?php } else print('----')
                                         ?>
@@ -103,7 +103,7 @@ if (Auth::user()->name == 'Super Admin') {
                                     <td class="text-nowrap">
 
                                         <?php
-                                        if ($module->status == 'Development') { ?>
+                                        if ($module->status == 2) { ?>
                                             <i class="fa fa-check" aria-hidden="true"></i>
                                         <?php } else print('----')
                                         ?>
