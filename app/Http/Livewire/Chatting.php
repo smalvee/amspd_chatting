@@ -10,7 +10,7 @@ use Livewire\Component;
 class Chatting extends Component
 {
 
-    public $chat_details, $data, $project, $users, $todo_id, $todo;
+    public $chat_details, $data, $project, $users, $todo_id, $todo, $refresh_count;
 
     public function mount($id)
     {

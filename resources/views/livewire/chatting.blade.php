@@ -205,4 +205,21 @@
         inputField.value = "A";
     });
 </script> -->
+
 @endpush
+
+<script>
+        $(document).ready(function() {
+            
+            function update_message_panel() {
+
+                $('.chat-content-scroll-area').scrollTop($('.chat-content-scroll-area')[0].scrollHeight);
+               
+                @this.set('refresh_count', Math.floor(Math.random() * 10));
+                setTimeout(update_message_panel, 1000); // Change in every 1 second
+            }
+
+            // Start the change cycle
+            update_message_panel();
+        });
+    </script>
