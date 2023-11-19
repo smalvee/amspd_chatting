@@ -65,7 +65,10 @@ class ToDo extends Component
         
 
         if ($access_permission == 'User' || $access_permission == 'Admin') {
-            $access = ProjectWiseUserAccess::where('user_id', Auth::user()->id)->where('project_id', $this->project->id)->first();
+            $access = ProjectWiseUserAccess::where('user_id', Auth::user()->id)->
+            where('project_id', $this->project->id)->
+            where('status', 1)->
+            where('read', 1)->first();
             if($access == NULL)
             {
                 $access = null;
@@ -202,6 +205,7 @@ class ToDo extends Component
 
         // Convert the array of file names to JSON
         $jsonFileNames = json_encode($uploadedFileNames);
+
 
 
 

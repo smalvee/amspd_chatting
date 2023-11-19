@@ -48,7 +48,7 @@ class UserAccess extends Component
         return view('livewire.user-access', [
 
             'users' => ProjectWiseUserAccess::where('module_id', $this->module_id)->when($this->search, function ($q) {
-                $q->where('user_id', 'LIKE', "%$this->search%");
+                $q->where('username', 'LIKE', "%$this->search%");
             })->get(),
 
             'all_users' => User::where('status', "Active")->get(),
@@ -86,7 +86,7 @@ class UserAccess extends Component
                 'read' => $this->read,
                 'update' => $this->update,
                 'delete' => $this->delete,
-                'status' => "Active",
+                'status' => "1",
                 'default_access' => $this->default_access,
                 'created_by' => Auth::user()->id,
             ]);
@@ -128,7 +128,7 @@ class UserAccess extends Component
             $this->update = $access_reffer->update;
             $this->delete = $access_reffer->delete;
             $this->default_access = $access_reffer->default_access;
-            // $this->name = $project->name;
+            $this->status = $access_reffer->status;
             // return view('livewire.project', compact((string) $projects_reffer));
         } else {
             return redirect()->to('/project');
@@ -146,6 +146,7 @@ class UserAccess extends Component
             'read' => 'nullable',
             'update' => 'nullable',
             'delete' => 'nullable',
+            'status' => 'nullable',
             'default_access' => 'nullable',
         ]);
 
@@ -155,6 +156,7 @@ class UserAccess extends Component
             'read' => $this->read,
             'update' => $this->update,
             'delete' => $this->delete,
+            'status' => $this->status,
 
         ]);
 
@@ -163,7 +165,8 @@ class UserAccess extends Component
             'create',
             'read',
             'update',
-            'delete'
+            'delete',
+            'status'
            
         ]);
 

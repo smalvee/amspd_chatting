@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Models\User;
 
 $Access_permission = NULL;
 $results2 = NULL;
@@ -28,7 +29,7 @@ if (Auth::user()->name == 'Super Admin') {
     }
 }
 
-// dd($Access_permission);
+// dd($Access_permission); 
 
 
 ?>
@@ -48,7 +49,7 @@ if (Auth::user()->name == 'Super Admin') {
                             </h5>
                         </div>
                         <div class="col-auto">
-                            <input class="form-control" type="search" placeholder="Search" wire:model="search">
+                            <input class="form-control" type="search" placeholder="Search by email" wire:model="search">
                         </div>
                     </div>
                 </div>
@@ -71,11 +72,15 @@ if (Auth::user()->name == 'Super Admin') {
                                 @foreach ($users as $user)
                                 <tr class="align-middle">
                                     <td class="text-nowrap"> {{ $loop->iteration }} </td>
+                                    @php
+                                    $user_name = User::where('email', $user->username)->get();
+                                    @endphp
+                                    @foreach($user_name as $name)
                                     <td class="text-nowrap">
-                                        {{ $user->username }}
+                                        {{ $name->name }}
                                     </td>
                                     <td class="text-nowrap">
-                                        {{ $user->user->email ?? '-' }}
+                                        {{ $user->username}}
                                     </td>
                                     <td class="text-nowrap">
                                         {{ $user->role }}
@@ -85,10 +90,12 @@ if (Auth::user()->name == 'Super Admin') {
                                     </td>
                                     @admin
                                     <td class="text-nowrap">
-                                        <button class="btn btn-falcon-danger btn-sm" onclick="confirm('Are you sure?') || event.stopImmediatePropagation()" wire:click="delete('{{ $user->id }}')">Delete</button>
                                         <button type="button" wire:click="Edit_modal({{$user->id}})" class="btn btn-falcon-primary btn-sm" data-bs-toggle="modal" data-bs-target="#update_modal">Edit</button>
+                                        <button class="btn btn-falcon-danger btn-sm" onclick="confirm('Are you sure?') || event.stopImmediatePropagation()" wire:click="delete('{{ $user->id }}')">Delete</button>
+
                                     </td>
                                     @endadmin
+                                    @endforeach
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -115,12 +122,21 @@ if (Auth::user()->name == 'Super Admin') {
                     <div class="ps-4 pe-4 pb-0">
                         <form wire:submit.prevent='submit'>
                             <div class="mb-3">
+                                <label class="col-form-label" for="email">Name</label>
+                                <input class="form-control" id="name" type="text" wire:model="name" />
+                                @error('name')
+                                <x-alert type="danger" :$message />
+                                @enderror
+                            </div>
+
+                            <div class="mb-3">
                                 <label class="col-form-label" for="email">Email Address</label>
                                 <input class="form-control" id="email" type="email" wire:model="email" />
                                 @error('email')
                                 <x-alert type="danger" :$message />
                                 @enderror
                             </div>
+
                             <div class="mb-3">
                                 <label class="col-form-label" for="role">Role</label>
                                 <select class="form-control" wire:model='role'>
@@ -137,11 +153,11 @@ if (Auth::user()->name == 'Super Admin') {
                             <div class="mb-3">
                                 <label class="col-form-label" for="type">Permission as Like</label>
                                 <select class="form-control" wire:model='type'>
-                                    <option value="">Select one</option>                                    
+                                    <option value="">Select one</option>
                                     <option value="User">User</option>
                                     <option value="Admin">Admin</option>
                                     <option value="Super Admin">Super Admin</option>
-                                   
+
                                 </select>
                                 @error('role')
                                 <x-alert type="danger" :$message />
@@ -149,19 +165,8 @@ if (Auth::user()->name == 'Super Admin') {
                             </div>
 
 
-
-                            {{-- <div class="mb-3">
-                                <label class="col-form-label" for="email">Email:</label>
-                                <input class="form-control" id="email" type="email" wire:model="email" />
-                                 @error('email') <x-alert type="danger" :$message /> @enderror
-                            </div>
-                            <div class="mb-3">
-                                <label class="col-form-label" for="password">Password:</label>
-                                <input class="form-control" id="password" type="password" wire:model="password" />
-                                 @error('password') <x-alert type="danger" :$message /> @enderror
-                            </div> --}}
                             <div class="mb-3 text-center">
-                                <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Close</button>
+                                <button class="btn btn-secondary" id="closeModalc" type="button" data-bs-dismiss="modal">Close</button>
                                 <button class="btn btn-primary" type="submit">Submit </button>
                             </div>
                         </form>
@@ -190,35 +195,50 @@ if (Auth::user()->name == 'Super Admin') {
                         <form wire:submit.prevent='update_modal'>
                             <div class="mb-3">
                                 <label class="col-form-label" for="email">Email Address</label>
-                                <input class="form-control" id="email" type="email" wire:model="email" />
+                                <input class="form-control" id="email" type="email" wire:model="email" disabled />
                                 @error('email')
                                 <x-alert type="danger" :$message />
                                 @enderror
                             </div>
+
+                            <div class="mb-3">
+                                <label class="col-form-label" for="email">Name</label>
+                                <input class="form-control" id="name" type="text" wire:model="name" />
+                                @error('name')
+                                <x-alert type="danger" :$message />
+                                @enderror
+                            </div>
+
+
                             <div class="mb-3">
                                 <label class="col-form-label" for="role">Role</label>
                                 <select class="form-control" wire:model='role'>
                                     <option value="">Select Role</option>
                                     @foreach ($roles as $role)
-                                    <option value="{{ $role }}">{{ $role }}</option>
+                                    <option value="{{ $role->role }}">{{ $role->role }}</option>
                                     @endforeach
                                 </select>
                                 @error('role')
                                 <x-alert type="danger" :$message />
                                 @enderror
                             </div>
-                            {{-- <div class="mb-3">
-                                <label class="col-form-label" for="email">Email:</label>
-                                <input class="form-control" id="email" type="email" wire:model="email" />
-                                 @error('email') <x-alert type="danger" :$message /> @enderror
-                            </div>
+
                             <div class="mb-3">
-                                <label class="col-form-label" for="password">Password:</label>
-                                <input class="form-control" id="password" type="password" wire:model="password" />
-                                 @error('password') <x-alert type="danger" :$message /> @enderror
-                            </div> --}}
+                                <label class="col-form-label" for="type">Permission as Like</label>
+                                <select class="form-control" wire:model='type'>
+                                    <option value="">Select one</option>
+                                    <option value="User">User</option>
+                                    <option value="Admin">Admin</option>
+                                    <option value="Super Admin">Super Admin</option>
+
+                                </select>
+                                @error('role')
+                                <x-alert type="danger" :$message />
+                                @enderror
+                            </div>
+
                             <div class="mb-3 text-center">
-                                <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Close</button>
+                                <button class="btn btn-secondary" onclick="empty()" id="closeModalu" type="button" data-bs-dismiss="modal">Close</button>
                                 <button class="btn btn-primary" type="submit">Update </button>
                             </div>
                         </form>
@@ -229,3 +249,36 @@ if (Auth::user()->name == 'Super Admin') {
     </div>
     @endadmin
 </div>
+
+<script>
+    window.addEventListener('closeModalc', event => {
+        console.log('Close modal event triggered');
+        var button = document.getElementById("close_button");
+        button.click();
+
+    });
+</script>
+<script>
+    window.addEventListener('closeModalu', event => {
+        console.log('Close modal event triggered');
+        var button = document.getElementById("close_button_u");
+        button.click();
+
+    });
+</script>
+<script>
+    function empty() {
+        var inputFields = document.querySelectorAll('input');
+        inputFields.forEach(function(inputField) {
+            inputField.value = '';
+        });
+
+        var inputFields = document.querySelectorAll('select');
+        inputFields.forEach(function(inputField) {
+            inputField.value = '';
+        });
+
+       
+
+    }
+</script>

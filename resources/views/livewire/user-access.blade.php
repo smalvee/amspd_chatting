@@ -23,12 +23,12 @@ use Illuminate\Support\Facades\DB;
 
                 <div class="card-body d-flex flex-column justify-content-end">
                     <div class="table-responsive scrollbar">
-                        <table class="table table-hover table-striped overflow-hidden">
+                        <table class="table table-hover table-striped overflow-hidden" style="text-align: center;">
                             <thead>
                                 <tr>
                                     <th scope="col">#</th>
-                                    <th scope="col">User ID</th>
-                                    <th scope="col">Project Name(ID)</th>
+                                    <th scope="col">User Name (ID)</th>
+                                    <th scope="col">Project Name (ID)</th>
                                     <th scope="col">status</th>
                                     <th scope="col">Create</th>
                                     <th scope="col">Read</th>
@@ -40,29 +40,47 @@ use Illuminate\Support\Facades\DB;
                             </thead>
                             <tbody>
                                 @foreach($users as $info)
+
+                                <?php
+
+                                $q1 = "SELECT name FROM projects WHERE id = $info->project_id";
+                                $p_name = DB::select($q1);
+
+                                foreach ($p_name as $p) {
+                                    $p->name;
+                                }
+                                $jsonString = $p->name;
+                                $data = json_decode($jsonString, true);
+                                if (isset($data['en'])) {
+                                    $p_name = $data['en'];
+                                }
+
+                                $q2 = "SELECT name FROM users WHERE id = $info->user_id";
+                                $u_name = DB::select($q2);
+
+                                foreach ($u_name as $u) {
+                                    $name = $u->name;
+                                }
+
+                                if($info->status == 1)
+                                {
+                                    $status = 'Active';
+                                }else{
+                                    $status = 'Inactive';
+                                }
+
+                                ?>
+
+
                                 <tr class="align-middle">
                                     <td class="text-nowrap"> {{ $loop->iteration }} </td>
-                                    <td class="text-nowrap">{{$info->user_id}}</td>
+                                    <td class="text-nowrap">{{ $name }} ({{$info->user_id}})</td>
 
-                                    <?php
 
-                                    $q1 = "SELECT name FROM projects WHERE id = $info->project_id";
-                                    $p_name = DB::select($q1);
-
-                                    foreach ($p_name as $p)
-                                        $p->name;
-
-                                    $jsonString = $p->name;
-                                    $data = json_decode($jsonString, true);
-
-                                    if (isset($data['en'])) {
-                                        $p_name = $data['en'];
-                                    }
-                                    ?>
 
                                     <td class="text-nowrap">{{$p_name}}({{$info->project_id}})</td>
 
-                                    <td class="text-nowrap">{{$info->status}}</td>
+                                    <td class="text-nowrap">{{$status}}</td>
 
                                     <td class="text-nowrap">
                                         <?php
@@ -95,12 +113,14 @@ use Illuminate\Support\Facades\DB;
                                         <?php } else print('----')
                                         ?>
                                     </td>
+                                    @admin
 
                                     <td class="text-nowrap">
                                         <!-- <button class="btn btn-falcon-primary btn-sm">Edit</button>  -->
                                         <button type="button" wire:click="Edit_modal({{$info->id}})" class="btn btn-falcon-primary btn-sm" data-bs-toggle="modal" data-bs-target="#update_modal">Edit</button>
                                         <button class="btn btn-falcon-danger btn-sm" onclick="confirm('Are you sure?') || event.stopImmediatePropagation()" wire:click="delete('{{ $info->id }}')">Delete</button>
                                     </td>
+                                    @endadmin
 
                                 </tr>
                                 @endforeach
@@ -132,7 +152,7 @@ use Illuminate\Support\Facades\DB;
                             <div class="mb-3">
                                 <label for="organizerSingle">Select User</label>
                                 <select class="form-select js-choice" id="user_id" wire:model="user_id" size="1" name="organizerSingle" data-options='{"removeItemButton":true,"placeholder":true}'>
-                                    <option value="">User List</option>
+                                    <option value="">Select User</option>
                                     @foreach($all_users as $a_u)
                                     <option value="{{$a_u->id}}">{{$a_u->email}}({{$a_u->id}})</option>
                                     @endforeach
@@ -142,24 +162,14 @@ use Illuminate\Support\Facades\DB;
 
                                 <label for="organizerSingle">Select Project</label>
                                 <select class="form-select js-choice" id="project_id" wire:model="project_id" size="1" name="organizerSingle" data-options='{"removeItemButton":true,"placeholder":true}'>
-                                    <option value="">User List</option>
+                                    <option value="">Select Project</option>
                                     @foreach($all_projects as $pro)
                                     <option value="{{$pro->id}}">{{$pro->name}}</option>
                                     @endforeach
                                 </select>
                                 @error('project_id') <x-alert type="danger" :$message /> @enderror
                             </div>
-                            <div class="mb-3">
-                                <label class="col-form-label" for="default_access">Permission As</label>
-                                <!-- <input class="form-control" id="permission_as" type="text" wire:model="permission_as" /> -->
-                                <select class="form-control" id="default_access" type="text" wire:model="default_access">
-                                    <option>Selcet One</option>
-                                    <option value="Admin">Admin</option>
-                                    <option value="Super Admin">Super Admin</option>
-                                </select>
-                                @error('permission_as') <x-alert type="danger" :$message /> @enderror
-
-                            </div>
+                            
                             <div class="mb-3">
                                 <label class="col-form-label" for="Custom_permission">Customize Permission</label>
 
@@ -253,18 +263,36 @@ use Illuminate\Support\Facades\DB;
                                     @endforeach
                                 </select>
                                 @error('project_id') <x-alert type="danger" :$message /> @enderror
-                            </div>
-                            <div class="mb-3">
-                                <label class="col-form-label" for="default_access">Permission As</label>
-                                <!-- <input class="form-control" id="permission_as" type="text" wire:model="permission_as" /> -->
-                                <select class="form-control" id="default_access" type="text" wire:model="default_access">
-                                    <option>Selcet One</option>
-                                    <option value="Admin">Admin</option>
-                                    <option value="Super Admin">Super Admin</option>
-                                </select>
-                                @error('permission_as') <x-alert type="danger" :$message /> @enderror
 
+                                
                             </div>
+
+                            <div class="mb-3">
+                                <label class="col-form-label" for="Custom_permission">Access Status</label>
+
+                                <table class="table table-hover table-striped overflow-hidden">
+                                    <thead>
+                                        <tr style="text-align: center;">
+
+                                            <th>Active/Inactive</th>
+                                            
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="align-middle" style="text-align: center;">
+
+
+                                            <td>
+                                                <div class="form-check form-switch form-check-inline">
+                                                    <input class="form-check-input" type="checkbox"  wire:model='status'>
+                                                </div>
+                                            </td>
+                                            
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
                             <div class="mb-3">
                                 <label class="col-form-label" for="Custom_permission">Customize Permission</label>
 
@@ -308,7 +336,7 @@ use Illuminate\Support\Facades\DB;
                             </div>
                             <div class="mb-3 text-center">
                                 <button class="btn btn-secondary" onclick="empty()" id="close_button_u" type="button" data-bs-dismiss="modal">Close</button>
-                                <button class="btn btn-primary" type="submit">Submit </button>
+                                <button class="btn btn-primary" type="submit">Update </button>
                             </div>
                         </form>
                     </div>

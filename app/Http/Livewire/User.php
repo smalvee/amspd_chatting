@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Auth;
 
 class User extends Component
 {
-    public $email, $role, $project_id, $user_id, $username, $search, $type;
+    public $email, $role, $project_id, $user_id, $username, $search, $type, $name, $user_check, $orgin_user_id;
 
     public function mount($project_id = null)
     {
@@ -22,6 +22,7 @@ class User extends Component
     {
 
         $module_id = NULL;
+        $user_check = null;
         $access = null;
         $create = NULL;
         $read = NULL;
@@ -42,7 +43,9 @@ class User extends Component
         return view('livewire.user', [
             'roles' => RoleWisePermission::all(),
             // 'roles' => RoleWisePermission::all()->unique('role'),
-            'users' => ProjectWiseUserInfo::where('project_id', $this->project_id)->get(),
+            'users' => ProjectWiseUserInfo::where('project_id', $this->project_id)->when($this->search, function ($q) {
+                $q->where('username', 'LIKE', "%$this->search%");
+            })->get(),
             'access' => $access,
             'access_permission' => $access_permission
         ])->extends('layouts.app');
@@ -53,6 +56,7 @@ class User extends Component
     public function submit()
     {
         $this->validate([
+            'name' => 'required|string',
             'email' => 'required|email',
             'role' => 'required|string',
             'type' => 'required'
@@ -72,25 +76,33 @@ class User extends Component
             $user = ModelsUser::create([
                 'type' => $this->type,
                 'status' => 'Invite',
-                'name' => "Name",
+                'name' => $this->name,
                 'email' => $this->email,
                 // 'password' => bcrypt(rand(111111, 999999)),
                 'password' => bcrypt('12345678'),
             ]);
         }
 
-        ProjectWiseUserInfo::create([
-            'username' => $this->email,
-            'role' => $this->role,
-            'project_id' => $this->project_id,
-            'user_id' => $user->id,
-            'status' => 'Invite',
-        ]);
 
-        $user->notify(new Invite($user, $this->project_id)); 
-        return redirect()->back();
-        $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => 'Successfully invitation sent !']);
-        $this->reset();
+        $user_check = ProjectWiseUserInfo::whereusername($this->email)->where('project_id', $this->project_id)->first();
+        if (!$user_check) {
+            ProjectWiseUserInfo::create([
+                'username' => $this->email,
+                'role' => $this->role,
+                'project_id' => $this->project_id,
+                'user_id' => $user->id,
+                'status' => 'Invite',
+            ]);
+
+            // $user->notify(new Invite($user, $this->project_id)); 
+            // return redirect()->back();
+            $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => 'Successfully invitation sent !']);
+            // $this->reset();
+        } else {
+            // dd(123);
+            $this->dispatchBrowserEvent('alert', ['type' => 'warning',  'message' => 'User already exist !']);
+            // $this->reset();
+        }
     }
 
 
@@ -99,20 +111,42 @@ class User extends Component
         $users = ProjectWiseUserInfo::findOrFail($user_id);
         if ($users) {
             $this->user_id = $users->id;
-            $this->email = $users->username;
+            $user_email = $this->email = $users->username;
             $this->role = $users->role;
+
+
+
+            $users_info = ModelsUser::whereEmail($user_email)->first();
+            $this->orgin_user_id = $users_info->id;
+            $this->name = $users_info->name;
+            $this->type = $users_info->type;
+
+            // dd($this->orgin_user_id);
+
+
         } else {
             return redirect()->to('/user');
         }
-    }  
+    }
 
 
     public function update_modal()
     {
+        $this->validate([
+            'name' => 'required|string',
+            'role' => 'required',
+            'type' => 'required'
+        ]);
+
+
         ProjectWiseUserInfo::where('id', $this->user_id)->update([
-            'username' => $this->email,
             'role' => $this->role,
         ]);
+        ModelsUser::where('id', $this->orgin_user_id)->update([
+            'type' => $this->type,
+            'name' => $this->name,
+        ]);
+
         $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => 'Successfully Edited!']);
     }
 
@@ -121,8 +155,9 @@ class User extends Component
     //     $this->ProjectWiseUserInfo->resetInput();
     // }
 
-    public function delete($user_id){
-        ProjectWiseUserInfo::findOrFail($user_id)->delete(); 
+    public function delete($user_id)
+    {
+        ProjectWiseUserInfo::findOrFail($user_id)->delete();
         $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => 'Successfully User deleted !']);
     }
 }

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('to_do_id');
             $table->string('user_id');
             $table->string('chat_details');
+            $table->string('attachments');
             $table->timestamps();
         });
     }

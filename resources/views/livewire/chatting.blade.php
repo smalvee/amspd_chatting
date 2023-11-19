@@ -1,3 +1,11 @@
+<?php
+
+use Illuminate\Support\Facades\Auth;
+
+$chat_sender_id = Auth::user()->email;
+
+?>
+
 <div>
     {{-- <x-breadcrumb title="{{ __('Chatting') }}" @superAdminOrAdmin btn="1" @endSuperAdminOrAdmin /> --}}
     <div class="row g-3 mb-3">
@@ -71,9 +79,12 @@
                                         </div>
                                     </div>
                                     <div class="col-auto">
-                                        <button class="btn btn-sm btn-falcon-primary btn-chat-info" type="button" data-index="0" data-bs-toggle="tooltip" data-bs-placement="top" title="Conversation Information">
+                                        <a href="{{ route('chat-file', $to_do_id_chat) }}">
+                                        <button class="btn btn-sm btn-falcon-primary btn-chat-info" type="button" title="Conversation File Information">
                                             <span class="fas fa-info"></span>
                                         </button>
+                                        </a>
+                                        
                                     </div>
                                 </div>
                             </div>
@@ -106,6 +117,7 @@
 
                                     @foreach($chat as $item)
 
+
                                     @if($item->user_id != Auth::user()->email)
                                     <!-- chat of other user start -->
                                     <div class="d-flex p-3">
@@ -114,9 +126,41 @@
                                         </div>
                                         <div class="flex-1">
                                             <div class="w-xxl-75">
-                                            <div class="text-400 fs--2"><span>{{ $item->user_id }}</span></div>
+                                                <div class="text-400 fs--2"><span>{{ $item->user_id }}</span></div>
                                                 <div class="hover-actions-trigger d-flex align-items-center">
-                                                    <div class="chat-message bg-200 p-2 rounded-2">{{ $item->chat_details }}</div>
+                                                    <div class="chat-message bg-200 p-2 rounded-2">{{ $item->chat_details }}
+                                                        <br>
+
+                                                        @if($item->attachments != null)
+
+                                                        @php
+                                                        $fileInfo = pathinfo($item->attachments);
+                                                        $fileExtension = strtolower($fileInfo['extension']);
+                                                        @endphp
+
+                                                        @if (in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif', 'bmp']))
+                                                        {{-- Display an image --}}
+                                                        <img src="{{ Storage::url('public/chat_file/' . $item->attachments) }}" alt="Image">
+                                                        <br>
+
+                                                        @elseif (in_array($fileExtension, ['pdf']))
+                                                        {{-- Display a PDF file --}}
+                                                        <embed src="{{ Storage::url('public/chat_file/' . $item->attachments) }}" type="application/pdf" width="100%" height="100%">
+                                                        <br>
+
+                                                        @elseif (in_array($fileExtension, ['mp4', 'avi', 'mov']))
+                                                        {{-- Display a video --}}
+                                                        <video width="320" height="240" controls>
+                                                            <source src="{{ Storage::url('public/chat_file/' . $item->attachments) }}" type="video/mp4">
+                                                            Your browser does not support the video tag.
+                                                        </video>
+                                                        <br>
+                                                        @endif
+
+                                                        <a target="_blank" style="color: black;" href="{{ Storage::url('public/chat_file/' . $item->attachments) }}">{{ $item->attachments }}</a>
+                                                        @endif
+                                                    </div>
+
                                                     <ul class="hover-actions position-relative list-inline mb-0 text-400 ms-2">
                                                         <li class="list-inline-item"><a class="chat-option" href="#!" data-bs-toggle="tooltip" data-bs-placement="top" title="Forward"><span class="fas fa-share"></span></a></li>
                                                         <li class="list-inline-item"><a class="chat-option" href="#!" data-bs-toggle="tooltip" data-bs-placement="top" title="Archive"><span class="fas fa-archive"></span></a></li>
@@ -130,13 +174,13 @@
                                     </div>
                                     <!-- chat of other user end -->
                                     @endif
-                                    
+
                                     @if($item->user_id == Auth::user()->email)
                                     <!-- chat of Loged in user Start -->
                                     <div class="d-flex p-3">
                                         <div class="flex-1 d-flex justify-content-end">
                                             <div class="w-100 w-xxl-75">
-                                            <div class="text-400 fs--2 text-end">{{ $item->user_id }}</div>
+                                                <div class="text-400 fs--2 text-end">{{ $item->user_id }}</div>
                                                 <div class="hover-actions-trigger d-flex flex-end-center">
                                                     <ul class="hover-actions position-relative list-inline mb-0 text-400 me-2">
                                                         <li class="list-inline-item"><a class="chat-option" href="#!" data-bs-toggle="tooltip" data-bs-placement="top" title="Forward"><span class="fas fa-share"></span></a></li>
@@ -145,7 +189,39 @@
                                                         <li class="list-inline-item"><a class="chat-option" href="#!" data-bs-toggle="tooltip" data-bs-placement="top" title="Remove"><span class="fas fa-trash-alt"></span></a></li>
                                                     </ul>
                                                     <div class="bg-primary text-white p-2 rounded-2 chat-message" data-bs-theme="light">{{ $item->chat_details }}
+                                                        <br>
+
+                                                        @if($item->attachments != null)
+
+                                                        @php
+                                                        $fileInfo = pathinfo($item->attachments);
+                                                        $fileExtension = strtolower($fileInfo['extension']);
+                                                        @endphp
+
+                                                        @if (in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif', 'bmp']))
+                                                        {{-- Display an image --}}
+                                                        <img src="{{ Storage::url('public/chat_file/' . $item->attachments) }}" alt="Image">
+                                                        <br>
+
+                                                        @elseif (in_array($fileExtension, ['pdf']))
+                                                        {{-- Display a PDF file --}}
+                                                        <embed src="{{ Storage::url('public/chat_file/' . $item->attachments) }}" type="application/pdf" width="100%" height="100%">
+                                                        <br>
+
+                                                        @elseif (in_array($fileExtension, ['mp4', 'avi', 'mov']))
+                                                        {{-- Display a video --}}
+                                                        <video width="320" height="240" controls>
+                                                            <source src="{{ Storage::url('public/chat_file/' . $item->attachments) }}" type="video/mp4">
+                                                            Your browser does not support the video tag.
+                                                        </video>
+                                                        <br>
+                                                        @endif
+
+                                                        <a target="_blank" style="color: white;" href="{{ Storage::url('public/chat_file/' . $item->attachments) }}">{{ $item->attachments }}</a>
+                                                        @endif
+
                                                     </div>
+
                                                 </div>
                                                 <div class="text-400 fs--2 text-end">{{ $item->created_at }}
                                                     <!-- <span class="fas fa-check ms-2 text-success"></span> -->
@@ -159,6 +235,8 @@
 
 
                                 </div>
+
+
                             </div>
                         </div>
 
@@ -168,58 +246,186 @@
                         <form wire:submit.prevent='submit' class="chat-editor-area">
                             <!-- <div class="emojiarea-editor outline-none scrollbar" contenteditable="true"></div> -->
                             <input class="emojiarea-editor outline-none scrollbar" id="chat_details" wire:model='chat_details' type="text" contenteditable="true" style="border: none;">
-                            <input class="d-none" type="file" id="chat-file-upload" />
+                            <input class="d-none" type="file" id="chat-file-upload" wire:model="attachments" />
                             <label class="chat-file-upload cursor-pointer" for="chat-file-upload">
                                 <span class="fas fa-paperclip"></span>
                             </label>
-                            <div class="btn btn-link emoji-icon" data-picmo="data-picmo" data-picmo-input-target=".emojiarea-editor">
+                            <!-- <div class="btn btn-link emoji-icon" data-picmo="data-picmo" data-picmo-input-target=".emojiarea-editor">
                                 <span class="far fa-laugh-beam"></span>
-                            </div>
+                            </div> -->
                             <button class="btn btn-sm btn-send shadow-none" type="submit">Send</button>
                         </form>
                     </div>
                     <!-- chat Body End -->
+
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-@push('scripts')
-<!-- <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        Livewire.on('reloadPage', function() {
-            // Reload the page when the 'reloadPage' event is received
-            location.reload();
-        });
-    });
-</script>
+
+
+
+
+
+
+
+
+
+
+
+
+<div>
+    <div class="row g-3 mb-3">
+        <div class="col-md-12">
+            <div class="card">
+                <form method="post" action="{{ route('send_chat_file', ['to_do_id_chat' => $to_do_id_chat]) }}" enctype="multipart/form-data">
+                    @csrf
+                    <div class="card-header">
+                        <div class="row flex-between-center">
+                            <div class="col-md">
+                                <h5 class="mb-2 mb-md-0">File Upload Section</h5>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body d-flex flex-column justify-content-end">
+                        <div>
+                            <input class="form-control" type="file" id="attachments" name="attachments" required>
+                            @error('attachments')
+                            <x-alert type="danger" :$message />
+                            @enderror
+                        </div>
+                        <div id="preview"></div>
+
+                        <button class="form-control btn btn-primary" type="submit">Send</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
 
 <script>
-    // Wait for the DOM content to be fully loaded
-    document.addEventListener("DOMContentLoaded", function() {
-        // Get the input field by its ID
-        var inputField = document.getElementById("myInput");
+    document.getElementById('attachments').addEventListener('change', handleFileSelect);
 
-        // Set the input field's value to "A"
-        inputField.value = "A";
+    function handleFileSelect(event) {
+        const files = event.target.files;
+
+        if (files.length === 0) {
+            return;
+        }
+
+        const previewContainer = document.getElementById('preview');
+        previewContainer.innerHTML = ''; // Clear previous previews
+
+        for (const file of files) {
+            const previewElement = document.createElement('div');
+            previewElement.className = 'file-preview';
+
+            // Check if the file type is an image (jpg or png)
+            if (file.type.startsWith('image/')) {
+                const previewImage = document.createElement('img');
+                previewImage.className = 'preview-image';
+                previewImage.src = URL.createObjectURL(file);
+                previewElement.appendChild(previewImage);
+            } else {
+                // Display a generic file icon for other file types
+                const fileIcon = document.createElement('img');
+                fileIcon.className = 'file-icon';
+                fileIcon.src = getFileIcon(file.type);
+                previewElement.appendChild(fileIcon);
+
+                const fileName = document.createElement('span');
+                fileName.textContent = file.name;
+                previewElement.appendChild(fileName);
+            }
+
+            previewContainer.appendChild(previewElement);
+        }
+    }
+
+    function getFileIcon(fileType) {
+        // Replace these icons with your own or use a library for more options
+        switch (fileType) {
+            case 'application/pdf':
+                return 'pdf-icon.png'; // Replace with your PDF icon
+                // Add more cases for different file types
+            default:
+                return 'generic-file-icon.png'; // Replace with a generic file icon
+        }
+    }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- <script>
+    $(document).ready(function() {
+
+        function update_message_panel() {
+
+            $('.chat-content-scroll-area').scrollTop($('.chat-content-scroll-area')[0].scrollHeight);
+
+            @this.set('refresh_count', Math.floor(Math.random() * 10));
+            setTimeout(update_message_panel, 1000); // Change in every 1 second
+        }
+
+        // Start the change cycle
+        update_message_panel();
     });
 </script> -->
 
-@endpush
-
 <script>
-        $(document).ready(function() {
-            
-            function update_message_panel() {
+    $(document).ready(function() {
 
-                $('.chat-content-scroll-area').scrollTop($('.chat-content-scroll-area')[0].scrollHeight);
-               
-                @this.set('refresh_count', Math.floor(Math.random() * 10));
-                setTimeout(update_message_panel, 1000); // Change in every 1 second
+        function update_message_panel() {
+
+            var autoScrollEnabled = true;
+
+            $('.chat-content-scroll-area').on('scroll', function() {
+                // Check if the user is actively scrolling
+                if ($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight) {
+                    // User is at the bottom, enable auto-scrolling
+                    autoScrollEnabled = true;
+                } else {
+                    // User is manually scrolling, disable auto-scrolling
+                    autoScrollEnabled = false;
+                }
+            });
+
+            // Function to handle auto-scrolling
+            function autoScroll() {
+                if (autoScrollEnabled) {
+                    $('.chat-content-scroll-area').scrollTop($('.chat-content-scroll-area')[0].scrollHeight);
+                }
             }
 
-            // Start the change cycle
-            update_message_panel();
-        });
-    </script>
+            // Call the autoScroll function periodically to check if auto-scrolling is enabled
+            setInterval(autoScroll, 5000); // Adjust the interval as needed
+
+            @this.set('refresh_count', Math.floor(Math.random() * 10));
+            setTimeout(update_message_panel, 1000); // Change in every 1 second
+        }
+
+        // Start the change cycle
+        update_message_panel();
+    });
+</script>

@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\Chatfile\ChatFileController;
 use App\Http\Controllers\TestEventController;
 use App\Http\Controllers\ToDoController;
 use App\Http\Livewire\AccessControl;
+use App\Http\Livewire\ChatFile;
 use App\Http\Livewire\Chatting;
 use App\Http\Livewire\Login;
 use App\Http\Livewire\Dashboard;
@@ -18,6 +20,7 @@ use App\Http\Livewire\User;
 use App\Http\Livewire\UserAccess;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -74,6 +77,9 @@ Route::group(['middleware' => 'auth'], function () {
     });
     Route::get('chatting/{id}', Chatting::class)->name('chatting');
     Route::get('provide_access/{m_id}', UserAccess::class)->name('provide_access');
+    Route::post('send_chat_file/{to_do_id_chat}', [ChatFileController::class, 'store'])->name('send_chat_file');
+    Route::get('chat-file/{id}', ChatFile::class)->name('chat-file');
+
 
 
     // Route::post('add_todo', ToDoController::class, 'store')->name('store')->middleware();

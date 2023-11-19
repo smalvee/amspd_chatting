@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 $module_id = NULL;
+$status = '1';
 $create = NULL;
 $read = NULL;
 $user_module = NULL;
@@ -181,8 +182,8 @@ if (Auth::user()->type == 'Admin') {
 
                     if (Auth::user()->type == 'User') {
                         // $user_module = DB::select('SELECT * FROM project_wise_user_accesses WHERE module_id = 5 && user_id = [$loggedin_id]');
-                        $query_user = "SELECT * FROM project_wise_user_accesses WHERE module_id = 5 AND user_id = ? AND project_id =?";
-                        $user_module = DB::select($query_user, [$loggedin_id, $s_active_project->id]);
+                        $query_user = "SELECT * FROM project_wise_user_accesses WHERE module_id = 5 AND status = ? AND user_id = ? AND project_id =?";
+                        $user_module = DB::select($query_user, [$status, $loggedin_id, $s_active_project->id]);
                         foreach ($user_module as $r1_user) {
                             $module_id_user = $r1_user->module_id;
                             $create_user = $r1_user->create;
@@ -193,8 +194,8 @@ if (Auth::user()->type == 'Admin') {
 
                     if (Auth::user()->type == 'User') {
                         // $todo_module = DB::select('SELECT * FROM project_wise_user_accesses WHERE module_id = 6 && user_id = $loggedin_id');
-                        $query_todo = "SELECT * FROM project_wise_user_accesses WHERE module_id = 6 AND user_id = ? AND project_id =?";
-                        $todo_module = DB::select($query_todo, [$loggedin_id, $s_active_project->id]);
+                        $query_todo = "SELECT * FROM project_wise_user_accesses WHERE module_id = 6 AND status = ? AND user_id = ? AND project_id =?";
+                        $todo_module = DB::select($query_todo, [$status, $loggedin_id, $s_active_project->id]);
                         foreach ($todo_module as $r1_todo) {
                             $module_id_todo = $r1_todo->module_id;
                             $create_todo = $r1_todo->create;
@@ -205,8 +206,8 @@ if (Auth::user()->type == 'Admin') {
 
                     if (Auth::user()->type == 'User') {
                         // $taskgroup_module = DB::select('SELECT * FROM project_wise_user_accesses WHERE module_id = 7 && user_id = $loggedin_id');
-                        $query_taskgroup = "SELECT * FROM project_wise_user_accesses WHERE module_id = 7 AND user_id = ? AND project_id =?";
-                        $taskgroup_module = DB::select($query_taskgroup, [$loggedin_id, $s_active_project->id]);
+                        $query_taskgroup = "SELECT * FROM project_wise_user_accesses WHERE module_id = 7 AND status = ? AND user_id = ? AND project_id =?";
+                        $taskgroup_module = DB::select($query_taskgroup, [$status, $loggedin_id, $s_active_project->id]);
                         foreach ($taskgroup_module as $r1_taskgroup) {
                             $module_id_taskgroup = $r1_taskgroup->module_id;
                             $create_taskgroup = $r1_taskgroup->create;

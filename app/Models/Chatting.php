@@ -13,5 +13,6 @@ class Chatting extends Model
         'to_do_id',
         'user_id',
         'chat_details',
+        'attachments',
     ];
 }

@@ -24,14 +24,39 @@
 <!--    Stylesheets-->
 <!-- ===============================================-->
 <link rel="preconnect" href="https://fonts.gstatic.com/">
-<link
-    href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,500,600,700%7cPoppins:300,400,500,600,700,800,900&amp;display=swap"
-    rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,500,600,700%7cPoppins:300,400,500,600,700,800,900&amp;display=swap" rel="stylesheet">
 <link href="{{ asset('assets/vendors/simplebar/simplebar.min.css') }}" rel="stylesheet">
 <link href="{{ asset('assets/css/theme-rtl.min.css') }}" rel="stylesheet" id="style-rtl">
 <link href="{{ asset('assets/css/theme.min.css') }}" rel="stylesheet" id="style-default">
 <link href="{{ asset('assets/css/user-rtl.min.css') }}" rel="stylesheet" id="user-style-rtl">
 <link href="{{ asset('assets/css/user.min.css') }}" rel="stylesheet" id="user-style-default">
+<style>
+    #preview {
+      margin-top: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      gap: 10px; /* Adjust the gap between images */
+    }
+
+    .file-preview {
+      display: flex;
+      align-items: center;
+      margin-bottom: 5px;
+    }
+
+    .file-icon {
+      width: 30px;
+      height: 30px;
+      margin-right: 10px;
+    }
+
+    .preview-image {
+      max-width: 200px; /* Adjust the width of each image */
+      max-height: 200px; /* Adjust the height of each image */
+      margin-right: 5px; /* Add margin between images */
+    }
+  </style>
 <script>
     var isRTL = JSON.parse(localStorage.getItem('isRTL'));
     if (isRTL) {
