@@ -73,7 +73,28 @@ class ToDo extends Component
             {
                 $access = null;
             }
+
+            // $tas = TaskGroup::where('project_id', $this->project->id)->get()->pluck('project_wise_user_info_ids', Auth::user()->id)->pluck('id');
+
+            $tas = TaskGroup::where('project_id', $this->project->id)
+            ->whereJsonContains('project_wise_user_info_ids', Auth::user()->id)
+            ->select('id', 'name', 'project_wise_user_info_ids')
+            ->get();
+
+        }else{
+            $tas = TaskGroup::where('project_id', $this->project->id)->get();
         }
+
+        
+
+        // dd($tas);
+
+
+
+
+
+
+
 
         // if ($access_permission == 'Super Admin') {
         //     $task_groups_view = TaskGroup::all();
@@ -91,7 +112,7 @@ class ToDo extends Component
             'todos' => ModelsToDo::where('project_id', $this->project->id)->when($this->search, function ($q) {
                 $q->where('name', 'LIKE', "%$this->search%");
             })->get(),
-            'task_groups_view' => TaskGroup::where('project_id', $this->project->id)->get(),
+            'task_groups_view' => $tas,
             'task_groups' => TaskGroup::where('project_id', $this->project->id)->get(),
             'project_users' => ProjectWiseUserInfo::where('project_id', $this->project->id)->get(),
             'access' => $access,

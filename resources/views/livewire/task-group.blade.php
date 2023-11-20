@@ -78,21 +78,22 @@
                             </div>
                             @foreach ($project_users as $user)
                             <div class="form-check form-switch form-check-inline">
-                                <input class="form-check-input" id="user-{{ $user->id }}" type="checkbox" wire:model="users.{{ $user->id }}">
-                                <label for="user-{{ $user->id }}">{{ $user->username }}, {{ $user->role }}</label>
+                                <input class="form-check-input" id="user-{{ $user->user_id }}" type="checkbox" wire:model="users.{{ $user->user_id }}">
+                                <label for="user-{{ $user->user_id }}">{{ $user->username }}, {{ $user->role }} {{ $user->user_id }}</label>
                             </div>
                             @endforeach
                             <div class="mb-3 text-center">
                                 <button class="btn btn-secondary" id="close_button" type="button" id data-bs-dismiss="modal">Close</button>
                                 <button class="btn btn-primary" type="submit">Submit </button>
                             </div>
-                        </form>
+                        </form> 
                     </div>
                 </div>
             </div>
         </div>
     </div>
     @endadmin
+    
 
     {{-- update || Update Modal --}}
     @admin
