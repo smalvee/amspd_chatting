@@ -27,7 +27,7 @@ $chat_sender_id = Auth::user()->email;
                                                 <h6 class="mb-0 chat-contact-title">Total User</h6>
                                             </div>
                                             <div class="min-w-0">
-                                                <div class="chat-contact-content pe-3"> 6 Users</div>
+                                                <div class="chat-contact-content pe-3"> {{$count}} Users</div>
                                                 <div class="position-absolute bottom-0 end-0 hover-hide"></div>
                                             </div>
                                         </div>
@@ -35,23 +35,44 @@ $chat_sender_id = Auth::user()->email;
                                 </div>
                                 <!-- Total User End -->
 
-
+                                <hr>
                                 <!-- chat User List start -->
                                 <div class="hover-actions-trigger">
+                                    @foreach($to_do_admin as $admin)
                                     <div class="d-flex p-3">
+
                                         <div class="avatar avatar-xl">
-                                            <img class="rounded-circle" src="../assets/img/team/23.jpg" alt="" />
+                                            <img class="rounded-circle" src="../assets/img/team/avatar.png" alt="" />
                                         </div>
                                         <div class="flex-1 chat-contact-body ms-2 d-md-none d-lg-block">
                                             <div class="d-flex justify-content-between">
-                                                <h6 class="mb-0 chat-contact-title">Gemma Whelan</h6>
+                                                <h6 class="mb-0 chat-contact-title">{{$admin->name}}</h6>
                                             </div>
                                             <div class="min-w-0">
-                                                <div class="chat-contact-content pe-3">Status: Online</div>
+                                                <div class="chat-contact-content pe-3">{{$admin->type}}</div>
 
                                             </div>
                                         </div>
                                     </div>
+                                    @endforeach
+                                    <hr>
+
+                                    @foreach($to_do_user_list as $chat_user)
+                                    <div class="d-flex p-3">
+                                        <div class="avatar avatar-xl">
+                                            <img class="rounded-circle" src="../assets/img/team/avatar.png" alt="" />
+                                        </div>
+                                        <div class="flex-1 chat-contact-body ms-2 d-md-none d-lg-block">
+                                            <div class="d-flex justify-content-between">
+                                                <h6 class="mb-0 chat-contact-title">{{$chat_user->name}}</h6>
+                                            </div>
+                                            <div class="min-w-0">
+                                                <div class="chat-contact-content pe-3">{{$chat_user->role}}</div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @endforeach
                                 </div>
                                 <!-- chat User List end -->
 
@@ -71,20 +92,22 @@ $chat_sender_id = Auth::user()->email;
                             <div class="chat-content-header">
                                 <div class="row flex-between-center">
                                     <div class="col-6 col-sm-8 d-flex align-items-center"><a class="pe-3 text-700 d-md-none contacts-list-show" href="#!">
-                                            <div class="fas fa-chevron-left"></div>
+                                            <!-- <div class="fas fa-chevron-left"></div> -->
                                         </a>
                                         <div class="min-w-0">
-                                            <h5 class="mb-0 text-truncate fs-0">ToDo Head Line</h5>
+                                            
+                                            <h5 style="max-width: 400px" class="mb-0 text-truncate fs-0">{{$to_do_head_line}}</h5>
+                                            
                                             <!-- <div class="fs--2 text-400">Active On Chat</div> -->
                                         </div>
                                     </div>
                                     <div class="col-auto">
                                         <a href="{{ route('chat-file', $to_do_id_chat) }}">
-                                        <button class="btn btn-sm btn-falcon-primary btn-chat-info" type="button" title="Conversation File Information">
-                                            <span class="fas fa-info"></span>
-                                        </button>
+                                            <button class="btn btn-sm btn-falcon-primary btn-chat-info" type="button" title="Conversation File Information">
+                                                <span class="fas fa-info"></span>
+                                            </button>
                                         </a>
-                                        
+
                                     </div>
                                 </div>
                             </div>
@@ -92,7 +115,7 @@ $chat_sender_id = Auth::user()->email;
                             <div class="chat-content-body" style="display: inherit;">
 
                                 <!-- Share media info Start -->
-                                <div class="conversation-info" data-index="0">
+                                <!-- <div class="conversation-info" data-index="0">
                                     <div class="h-100 overflow-auto scrollbar">
                                         <hr class="my-2" />
                                         <div class="px-3" id="others-info-0">
@@ -109,7 +132,7 @@ $chat_sender_id = Auth::user()->email;
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div> -->
                                 <!-- Share media info End -->
 
 
@@ -118,11 +141,11 @@ $chat_sender_id = Auth::user()->email;
                                     @foreach($chat as $item)
 
 
-                                    @if($item->user_id != Auth::user()->email)
+                                    @if($item->user_id != Auth::user()->name)
                                     <!-- chat of other user start -->
                                     <div class="d-flex p-3">
                                         <div class="avatar avatar-l me-2">
-                                            <img class="rounded-circle" src="../assets/img/team/2.jpg" alt="" />
+                                            <img class="rounded-circle" src="../assets/img/team/avatar.png" alt="" />
                                         </div>
                                         <div class="flex-1">
                                             <div class="w-xxl-75">
@@ -161,12 +184,12 @@ $chat_sender_id = Auth::user()->email;
                                                         @endif
                                                     </div>
 
-                                                    <ul class="hover-actions position-relative list-inline mb-0 text-400 ms-2">
+                                                    <!-- <ul class="hover-actions position-relative list-inline mb-0 text-400 ms-2">
                                                         <li class="list-inline-item"><a class="chat-option" href="#!" data-bs-toggle="tooltip" data-bs-placement="top" title="Forward"><span class="fas fa-share"></span></a></li>
                                                         <li class="list-inline-item"><a class="chat-option" href="#!" data-bs-toggle="tooltip" data-bs-placement="top" title="Archive"><span class="fas fa-archive"></span></a></li>
                                                         <li class="list-inline-item"><a class="chat-option" href="#!" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"><span class="fas fa-edit"></span></a></li>
                                                         <li class="list-inline-item"><a class="chat-option" href="#!" data-bs-toggle="tooltip" data-bs-placement="top" title="Remove"><span class="fas fa-trash-alt"></span></a></li>
-                                                    </ul>
+                                                    </ul> -->
                                                 </div>
                                                 <div class="text-400 fs--2"><span>{{ $item->created_at }}</span></div>
                                             </div>
@@ -175,19 +198,19 @@ $chat_sender_id = Auth::user()->email;
                                     <!-- chat of other user end -->
                                     @endif
 
-                                    @if($item->user_id == Auth::user()->email)
+                                    @if($item->user_id == Auth::user()->name)
                                     <!-- chat of Loged in user Start -->
                                     <div class="d-flex p-3">
                                         <div class="flex-1 d-flex justify-content-end">
                                             <div class="w-100 w-xxl-75">
                                                 <div class="text-400 fs--2 text-end">{{ $item->user_id }}</div>
                                                 <div class="hover-actions-trigger d-flex flex-end-center">
-                                                    <ul class="hover-actions position-relative list-inline mb-0 text-400 me-2">
+                                                    <!-- <ul class="hover-actions position-relative list-inline mb-0 text-400 me-2">
                                                         <li class="list-inline-item"><a class="chat-option" href="#!" data-bs-toggle="tooltip" data-bs-placement="top" title="Forward"><span class="fas fa-share"></span></a></li>
                                                         <li class="list-inline-item"><a class="chat-option" href="#!" data-bs-toggle="tooltip" data-bs-placement="top" title="Archive"><span class="fas fa-archive"></span></a></li>
                                                         <li class="list-inline-item"><a class="chat-option" href="#!" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"><span class="fas fa-edit"></span></a></li>
                                                         <li class="list-inline-item"><a class="chat-option" href="#!" data-bs-toggle="tooltip" data-bs-placement="top" title="Remove"><span class="fas fa-trash-alt"></span></a></li>
-                                                    </ul>
+                                                    </ul> -->
                                                     <div class="bg-primary text-white p-2 rounded-2 chat-message" data-bs-theme="light">{{ $item->chat_details }}
                                                         <br>
 

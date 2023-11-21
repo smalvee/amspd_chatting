@@ -56,57 +56,50 @@ class ToDo extends Component
         // Alvee Code Start
         // dd(123);
 
- 
 
-       
+
+
         $access = NULL;
-  
+
         $access_permission = Auth::user()->type ?? null;
-        
+
 
         if ($access_permission == 'User' || $access_permission == 'Admin') {
-            $access = ProjectWiseUserAccess::where('user_id', Auth::user()->id)->
-            where('project_id', $this->project->id)->
-            where('status', 1)->
-            where('read', 1)->first();
-            if($access == NULL)
-            {
+            $access = ProjectWiseUserAccess::where('user_id', Auth::user()->id)->where('project_id', $this->project->id)->where('status', 1)->where('read', 1)->first();
+            if ($access == NULL) {
                 $access = null;
             }
 
             // $tas = TaskGroup::where('project_id', $this->project->id)->get()->pluck('project_wise_user_info_ids', Auth::user()->id)->pluck('id');
 
-            $tas = TaskGroup::where('project_id', $this->project->id)
-            ->whereJsonContains('project_wise_user_info_ids', Auth::user()->id)
-            ->select('id', 'name', 'project_wise_user_info_ids')
-            ->get();
+            // $tas = TaskGroup::where('project_id', $this->project->id)
+            //     ->whereJsonContains('project_wise_user_info_ids', Auth::user()->id)
+            //     ->select('id', 'name', 'project_wise_user_info_ids')
+            //     ->get();
 
-        }else{
-            $tas = TaskGroup::where('project_id', $this->project->id)->get();
-        }
-
+            $tas = TaskGroup::join('task_group_wise_user_lists', 'task_groups.id', '=', 'task_group_wise_user_lists.task_group_id')
+                ->select('task_groups.id', 'task_groups.name')
+                ->where('task_group_wise_user_lists.user_id', Auth::user()->id)
+                ->where('task_group_wise_user_lists.project_id', $this->project->id)
+                ->where('task_group_wise_user_lists.status', 1)
+                ->get();
+        } 
         
 
-        // dd($tas);
-
-
-
-
-
-
-
-
-        // if ($access_permission == 'Super Admin') {
-        //     $task_groups_view = TaskGroup::all();
-        // } else
-        // {
-        //     $task_groups_view = TaskGroup::where('project_id', $this->project->id)->get();
+        if($access_permission == 'Super Admin' || $access_permission == 'Admin')
+        {
+            $tas = TaskGroup::where('project_id', $this->project->id)->get();
+        }
+        
+        
+        
+        
+        
+        
+        
+        // else {
+        //     $tas = TaskGroup::where('project_id', $this->project->id)->get();
         // }
-
-
-
-      
-        // Alvee Code End 
 
         $data = [
             'todos' => ModelsToDo::where('project_id', $this->project->id)->when($this->search, function ($q) {
@@ -121,9 +114,6 @@ class ToDo extends Component
         ];
 
         return view('livewire.to-do', $data)->extends('layouts.app');
-
-
-
     }
 
 

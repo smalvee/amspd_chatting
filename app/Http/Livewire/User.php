@@ -62,15 +62,6 @@ class User extends Component
             'type' => 'required'
         ]);
 
-        // $get = RoleWisePermission::where('role', $this->role)->unique('role');
-        // $get = RoleWisePermission::where('role', $this->role)->distinct()->pluck('permission_as');
-        // foreach($get as $permission_as)
-        // {
-        //     $permission_as;
-        // }
-
-        // dd($p);
-
         $user = ModelsUser::whereEmail($this->email)->first();
         if (!$user) {
             $user = ModelsUser::create([

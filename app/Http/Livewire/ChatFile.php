@@ -18,13 +18,16 @@ class ChatFile extends Component
     public function render()
     {
         
+
+        // dd($todo_user);
+        
         $data = [            
             'chat' => Chatting::where('to_do_id', $this->todo_id)
                   ->whereNotNull('attachments')->when($this->search, function ($q) {
                     $q->where('attachments', 'LIKE', "%$this->search%");
                 })->get(),
 
-            'tidiid' => $this->todo_id    
+            'tidiid' => $this->todo_id
 
         ];
         
