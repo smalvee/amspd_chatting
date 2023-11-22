@@ -212,7 +212,7 @@ use Illuminate\Support\Facades\DB;
                                 </table>
                             </div>
                             <div class="mb-3 text-center">
-                                <button class="btn btn-secondary" id="close_button" type="button" data-bs-dismiss="modal">Close</button>
+                                <button class="btn btn-secondary" onclick="empty()" id="close_button" type="button" data-bs-dismiss="modal">Close</button>
                                 <button class="btn btn-primary" type="submit">Submit </button>
                             </div>
                         </form>

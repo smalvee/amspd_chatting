@@ -30,7 +30,6 @@ $results1 = TaskGroupWiseUserList::where('task_group_id', $task)->get();
 ?>
 
 
-
 <div>
     <x-breadcrumb title="{{ __('Task Group') }}" @admin btn="1" @endadmin />
     <div class="row g-3 mb-3">
@@ -112,7 +111,7 @@ $results1 = TaskGroupWiseUserList::where('task_group_id', $task)->get();
                             </div>
                            
                             <div class="mb-3 text-center">
-                                <button class="btn btn-secondary" id="close_button" type="button" id data-bs-dismiss="modal">Close</button>
+                                <button class="btn btn-secondary" onclick="empty()" id="close_add_task_group_Modal" type="button" id data-bs-dismiss="modal">Close</button>
                                 <button class="btn btn-primary" type="submit">Submit </button>
                             </div>
                         </form>
@@ -192,7 +191,7 @@ $results1 = TaskGroupWiseUserList::where('task_group_id', $task)->get();
                             </div>
                             @endforeach
                             <div class="mb-3 text-center">
-                                <button class="btn btn-secondary" id="close_button" type="button" id="close_add_user_Modal" data-bs-dismiss="modal">Close</button>
+                                <button class="btn btn-secondary" onclick="empty()" id="close_add_user_Modal" type="button" id="close_add_user_Modal" data-bs-dismiss="modal">Close</button>
                                 <button class="btn btn-primary" type="submit">Add</button>
                             </div>
                         </form>
@@ -225,7 +224,7 @@ $results1 = TaskGroupWiseUserList::where('task_group_id', $task)->get();
                                 @error('category') <x-alert type="danger" :$message /> @enderror
                             </div>
                             <div class="mb-3 text-center">
-                                <button class="btn btn-secondary" id="close_update_Modal" type="button" data-bs-dismiss="modal">Close</button>
+                                <button class="btn btn-secondary" onclick="empty()" id="close_update_Modal" type="button" data-bs-dismiss="modal">Close</button>
                                 <button class="btn btn-primary" type="submit">Update </button>
                             </div>
 
@@ -246,23 +245,32 @@ $results1 = TaskGroupWiseUserList::where('task_group_id', $task)->get();
 
 
 <script>
-    window.addEventListener('close_add_user_Modal', event => {
+    window.addEventListener('close_add_task_group_Modal', event => {
         console.log('Close modal event triggered');
-        var button = document.getElementById("close_add_user_Modal");
+        var button = document.getElementById("close_add_task_group_Modal");
         button.click();
-        location.reload();
+        // location.reload();
 
     });
 </script>
 <script>
     window.addEventListener('close_update_Modal', event => {
         console.log('Close modal event triggered');
-        var button = document.getElementById("close_add_user_Modal");
+        var button = document.getElementById("close_update_Modal");
         button.click();
-        location.reload();
+        // location.reload();
 
     });
 </script>
+<script>
+    window.addEventListener('close_add_user_Modal', event => {
+        console.log('Close modal event triggered');
+        var button = document.getElementById("close_add_user_Modal");
+        button.click();
+        location.reload();
+    });
+</script>
+
 <script>
     function empty() {
         var inputFields = document.querySelectorAll('input');

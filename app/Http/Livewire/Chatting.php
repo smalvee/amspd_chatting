@@ -16,7 +16,7 @@ class Chatting extends Component
 {
     use WithFileUploads;
 
-    public $chat_details, $data, $project, $users, $todo_id, $todo, $refresh_count, $attachments = [], $admin= 'Admin';
+    public $chat_details, $pro_id, $data, $project, $users, $todo_id, $todo, $refresh_count, $attachments = [], $admin = 'Admin';
 
     public function mount($id)
     {
@@ -27,15 +27,29 @@ class Chatting extends Component
 
     public function render()
     {
-        $admin= 'Admin';
-        
+        $pro_id = ToDo::select('project_id')->where('id', $this->todo_id)->value('project_id');
+        // dd($pro_id);
 
-        $todo_user = User::select('users.id', 'users.name', 'project_wise_user_infos.role')
+
+
+        // $todo_user = User::select('users.id', 'users.name', 'project_wise_user_infos.role')
+        //     ->join('task_group_wise_user_lists', 'users.id', '=', 'task_group_wise_user_lists.user_id')
+        //     ->join('to_dos', 'task_group_wise_user_lists.task_group_id', '=', 'to_dos.group_id')
+        //     ->join('project_wise_user_infos', 'users.id', '=', 'project_wise_user_infos.user_id')
+
+        //     ->where('to_dos.id', $this->todo_id)
+        //     ->get();
+
+        $todo_user = User::select('users.id', 'users.name', 'project_wise_user_infos.role', 'project_wise_user_infos.project_id')
             ->join('task_group_wise_user_lists', 'users.id', '=', 'task_group_wise_user_lists.user_id')
             ->join('to_dos', 'task_group_wise_user_lists.task_group_id', '=', 'to_dos.group_id')
-            ->join('project_wise_user_infos', 'users.id', '=', 'project_wise_user_infos.user_id')
-            ->where('to_dos.id', $this->todo_id)
+            ->join('project_wise_user_infos', function ($join) use ($pro_id) {
+                $join->on('users.id', '=', 'project_wise_user_infos.user_id')
+                    ->where('project_wise_user_infos.project_id', '=', $pro_id);
+            })
+            ->where('to_dos.id', '=', $this->todo_id)
             ->get();
+
 
         $get_to_do_admin = User::select('users.id', 'users.name', 'users.type', 'project_wise_user_infos.role')
             ->join('project_wise_user_infos', 'users.id', '=', 'project_wise_user_infos.user_id')
@@ -44,7 +58,7 @@ class Chatting extends Component
             ->where('to_dos.id', $this->todo_id)
             ->get();
 
-            $to_head_line = ToDo::join('chattings', 'to_dos.id', '=', 'chattings.to_do_id')
+        $to_head_line = ToDo::join('chattings', 'to_dos.id', '=', 'chattings.to_do_id')
             ->where('to_dos.id', $this->todo_id)
             ->value('to_dos.title_shown_in_task_list');
 

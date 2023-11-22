@@ -2,14 +2,16 @@
 
     <?php
 
+    use Illuminate\Support\Facades\Auth;
     use Illuminate\Support\Facades\DB;
 
     // dd($access);
-    if($access_permission == 'User' && $access == null)
-    {
-        echo("Permission denied");
+    if ($access_permission == 'User' && $access == null) {
+        echo ("Permission denied");
         return url('/project');
     }
+
+    $loged_in_id = Auth::user()->id;
 
 
     ?>
@@ -166,7 +168,7 @@
 
                     // dd($task_groups_view);
                     ?>
-                    
+
 
                     @foreach($task_groups_view as $tsk_view)
                     <li class="nav-item" role="presentation">
@@ -221,9 +223,15 @@
                                                 @endif
 
 
+
+
+
+
                                                 @if($access_permission == 'Super Admin' || $access_permission == 'Admin' || $access->module_id == '6' && $access->update == '1')
-                                                <button class="btn btn-falcon-primary btn-sm">Edit</button>
+                                                <button type="button" wire:click="Edit_modal({{$todo->id}})" class="btn btn-falcon-primary btn-sm" data-bs-toggle="modal" data-bs-target="#update_modal">Edit</button>
                                                 @endif
+
+                                                <button type="button" wire:click="show_data_on_submit_modal({{$todo->id}})" class="btn btn-falcon-warning btn-sm" data-bs-toggle="modal" data-bs-target="#submit_modal">Submit</button>
 
                                                 @if($access_permission == 'Super Admin' || $access_permission == 'Admin' || $access->module_id == '6' && $access->delete == '1')
                                                 <button class="btn btn-falcon-danger btn-sm" onclick="confirm('Are you sure?') || event.stopImmediatePropagation()" wire:click="delete('{{ $todo->id }}')">Delete</button>
@@ -268,7 +276,7 @@
                                 <x-alert type="danger" :$message />
                                 @enderror
                             </div>
-                           
+
 
                             <div class="mb-3">
                                 <label class="col-form-label" for="group">Group</label>
@@ -293,7 +301,11 @@
                                 @enderror
                             </div>
 
-                            <div class="mb-3">
+
+
+                            <input class="form-control" id="creator" type="hidden" wire:model="created_by" value="{{$loged_in_id}}">
+
+                            <!-- <div class="mb-3">
                                 <label class="col-form-label" for="creator">Created by</label>
                                 <select class="form-control" id="creator" type="text" wire:model="created_by">
                                     <option value="">Select User</option>
@@ -304,7 +316,7 @@
                                 @error('created_by')
                                 <x-alert type="danger" :$message />
                                 @enderror
-                            </div>
+                            </div> -->
 
                             <div class="mb-3">
                                 <label class="col-form-label" for="title_shown_in_task_list">Title shown in Task
@@ -502,7 +514,7 @@
                             </div>
 
                             <div class="mb-3 text-center">
-                                <button class="btn btn-secondary" id="close_button" type="button" data-bs-dismiss="modal">Close</button>
+                                <button class="btn btn-secondary" onclick="empty()" id="close_button" type="button" data-bs-dismiss="modal">Close</button>
                                 <button class="btn btn-primary" type="submit">Submit </button>
                             </div>
                         </form>
@@ -512,6 +524,463 @@
         </div>
     </div>
     @endif
+
+
+
+
+
+
+    {{-- Update || Update Modal --}}
+
+    @if($access_permission == 'Super Admin' || $access_permission == 'Admin' || $access->module_id == '6' && $access->update == '1')
+
+    <div wire:ignore.self class="modal fade" id="update_modal">
+        <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 800px">
+            <div class="modal-content position-relative">
+                <div class="position-absolute top-0 end-0 mt-2 me-2 z-1">
+                    <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <div class="rounded-top-3 py-3 ps-4 pe-6 bg-light">
+                        <h4 class="mb-1"> Task Form </h4>
+                    </div>
+                    <div class="ps-4 pe-4 pb-0">
+                        <form wire:submit.prevent='update_modal'>
+                            <input class="form-controll" type="hidden" wire:model='to_do_id'>
+                            <div class="mb-3">
+                                <div class="form-check form-switch form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="display_at_task_list_status" wire:model='display_at_task_list_status'>
+                                    <label for="display_at_task_list_status">{{ __('Display at task list status') }}</label>
+                                </div>
+                                @error('display_at_task_list_status')
+                                <x-alert type="danger" :$message />
+                                @enderror
+                            </div>
+
+
+                            <div class="mb-3">
+                                <label class="col-form-label" for="group">Group</label>
+                                <select class="form-control" id="group" type="text" wire:model="group_id">
+                                    <option value="">Select Task Group</option>
+                                    @foreach ($task_groups as $task_group)
+                                    <option value="{{ $task_group->id }}">{{ $task_group->name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('group_id')
+                                <x-alert type="danger" :$message />
+                                @enderror
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="form-check form-switch form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="rebuild_view_member_status" wire:model='rebuild_view_member_status'>
+                                    <label for="rebuild_view_member_status">{{ __('Rebuild view member') }}</label>
+                                </div>
+                                @error('rebuild_view_member_status')
+                                <x-alert type="danger" :$message />
+                                @enderror
+                            </div>
+
+
+
+                            <input class="form-control" id="creator" type="hidden" wire:model="created_by" value="{{$loged_in_id}}">
+
+                            <!-- <div class="mb-3">
+                                <label class="col-form-label" for="creator">Created by</label>
+                                <select class="form-control" id="creator" type="text" wire:model="created_by">
+                                    <option value="">Select User</option>
+                                    @foreach ($project_users as $project_user)
+                                    <option value="{{ $project_user->id }}">{{ $project_user->username }}</option>
+                                    @endforeach
+                                </select>
+                                @error('created_by')
+                                <x-alert type="danger" :$message />
+                                @enderror
+                            </div> -->
+
+                            <div class="mb-3">
+                                <label class="col-form-label" for="title_shown_in_task_list">Title shown in Task
+                                    List</label>
+                                <input class="form-control" id="title_shown_in_task_list" type="text" wire:model="title_shown_in_task_list" />
+                                @error('title_shown_in_task_list')
+                                <x-alert type="danger" :$message />
+                                @enderror
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="form-check form-switch form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="chat_function_status" wire:model='chat_function_status'>
+                                    <label for="chat_function_status">{{ __('Chat function') }}</label>
+                                </div>
+                                @error('chat_function_status')
+                                <x-alert type="danger" :$message />
+                                @enderror
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="form-check form-switch form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="send_notice_mail_status" wire:model='send_notice_mail_status'>
+                                    <label for="send_notice_mail_status">{{ __('Send notice mail') }}</label>
+                                </div>
+                                @error('send_notice_mail_status')
+                                <x-alert type="danger" :$message />
+                                @enderror
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="form-check form-switch form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="display_after_deadline_expired_status" wire:model='display_after_deadline_expired_status'>
+                                    <label for="display_after_deadline_expired_status">{{ __('Display even if the deadline expired.') }}</label>
+                                </div>
+                                @error('display_after_deadline_expired_status')
+                                <x-alert type="danger" :$message />
+                                @enderror
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="col-form-label" for="display_deadline">Deadline for viewing</label>
+                                <input class="form-control" id="display_deadline" type="date" wire:model="display_deadline" />
+                                @error('display_deadline')
+                                <x-alert type="danger" :$message />
+                                @enderror
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="form-check form-switch form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="submission_deadline_status" wire:model='submission_deadline_status'>
+                                    <label for="submission_deadline_status">{{ __('Deadline for the submission') }}</label>
+                                </div>
+                                @error('submission_deadline_status')
+                                <x-alert type="danger" :$message />
+                                @enderror
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="col-form-label" for="submission_deadline">Required</label>
+                                <input class="form-control" id="submission_deadline" type="date" wire:model="submission_deadline" />
+                                @error('submission_deadline')
+                                <x-alert type="danger" :$message />
+                                @enderror
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="form-check form-switch form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="meeting_datetime_status" wire:model='meeting_datetime_status'>
+                                    <label for="meeting_datetime_status">{{ __('Date & Time for exhibition') }}</label>
+                                </div>
+                                @error('meeting_datetime_status')
+                                <x-alert type="danger" :$message />
+                                @enderror
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="col-form-label" for="meeting_datetime"> Set the meting date & time
+                                </label>
+                                <input class="form-control" id="meeting_datetime" type="date" wire:model="meeting_datetime" />
+                                @error('meeting_datetime')
+                                <x-alert type="danger" :$message />
+                                @enderror
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="col-form-label" for="place_info">Place info. shown in Task List </label>
+                                <textarea class="form-control summernote" wire:model="place_info" id="place_info" cols="30" rows="10"></textarea>
+                                @error('place_info')
+                                <x-alert type="danger" :$message />
+                                @enderror
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="col-form-label" for="sub_title"> Sub title </label>
+                                <input class="form-control" id="sub_title" type="text" wire:model="sub_title" />
+                                @error('sub_title')
+                                <x-alert type="danger" :$message />
+                                @enderror
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="col-form-label" for="content">Contents </label>
+                                <textarea class="form-control summernote" wire:model="content" id="content" cols="30" rows="10"></textarea>
+                                @error('content')
+                                <x-alert type="danger" :$message />
+                                @enderror
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="col-form-label" for="attachments">Attached files </label>
+                                <!-- @livewire('files-upload', ['field_name' => 'attachments', 'multiple' => true])
+                                    @error('attachments')
+                                        <x-alert type="danger" :$message />
+                                    @enderror -->
+                                <input id="droap-area" type="file" wire:model="attachments" multiple>
+
+
+
+
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="col-form-label" for="submission_title">Title of submission page</label>
+                                <input class="form-control" id="submission_title" type="text" wire:model="submission_title" />
+                                @error('submission_title')
+                                <x-alert type="danger" :$message />
+                                @enderror
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="form-check form-switch form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="display_theme_list_status" wire:model='display_theme_list_status'>
+                                    <label for="display_theme_list_status">{{ __('Display themes list') }}</label>
+                                </div>
+                                @error('display_theme_list_status')
+                                <x-alert type="danger" :$message />
+                                @enderror
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="form-check form-switch form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="presentation_screen_status" wire:model='presentation_screen_status'>
+                                    <label for="presentation_screen_status">{{ __('Presentation screen status') }}</label>
+                                </div>
+                                @error('presentation_screen_status')
+                                <x-alert type="danger" :$message />
+                                @enderror
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="col-form-label" for="presentation_screen_content"> </label>
+                                <textarea class="form-control summernote" wire:model="presentation_screen_content" id="presentation_screen_content" cols="30" rows="10"></textarea>
+                                @error('presentation_screen_content')
+                                <x-alert type="danger" :$message />
+                                @enderror
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="form-check form-switch form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="functional_display_frame_prod_status" wire:model='functional_display_frame_prod_status'>
+                                    <label for="functional_display_frame_prod_status">{{ __('Functional display frame prod status') }}</label>
+                                </div>
+                                @error('functional_display_frame_prod_status')
+                                <x-alert type="danger" :$message />
+                                @enderror
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="form-check form-switch form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="hide_submission_information_status" wire:model='hide_submission_information_status'>
+                                    <label for="hide_submission_information_status">{{ __('Hide submission information status') }}</label>
+                                </div>
+                                @error('hide_submission_information_status')
+                                <x-alert type="danger" :$message />
+                                @enderror
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="form-check form-switch form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="remark_display_status" wire:model='remark_display_status'>
+                                    <label for="remark_display_status">{{ __('Remark display status') }}</label>
+                                </div>
+                                @error('remark_display_status')
+                                <x-alert type="danger" :$message />
+                                @enderror
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="col-form-label" for="signature">Signature </label>
+                                <textarea class="form-control summernote" wire:model="signature" id="signature" cols="30" rows="10"></textarea>
+                                @error('signature')
+                                <x-alert type="danger" :$message />
+                                @enderror
+                            </div>
+
+                            <div class="mb-3 text-center">
+                                <button class="btn btn-secondary" onclick="empty()" id="close_update_Modal" type="button" data-bs-dismiss="modal">Close</button>
+                                <button class="btn btn-primary" type="submit">Update </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
+
+
+    {{-- submit_modal || Update Modal --}}
+
+    @if($access_permission == 'Super Admin' || $access_permission == 'Admin' || $access->module_id == '6' && $access->update == '1')
+
+    <div wire:ignore.self class="modal fade" id="submit_modal">
+        <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 800px">
+            <div class="modal-content position-relative">
+                <div class="position-absolute top-0 end-0 mt-2 me-2 z-1">
+                    <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <div class="rounded-top-3 py-3 ps-4 pe-6 bg-light">
+                        <h4 class="mb-1"> Submit Form </h4>
+                    </div>
+                    <div class="ps-4 pe-4 pb-0">
+                        <form wire:submit.prevent='updateProgress'>
+
+
+                            <div class="card-header">
+                                <div class="row flex-between-center">
+                                    <div class="col-md">
+                                        <h5 class="mb-2 mb-md-0">Submit Your Slide</h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="card-body d-flex flex-column justify-content-end">
+                                <div>
+                                    <input class="form-control" id="droap-area" type="file" wire:model="submit_attachment" multiple>
+                                    @error('attachments')
+                                    <x-alert type="danger" :$message />
+                                    @enderror
+                                </div>
+                                <div id="preview"></div>
+
+                                <button class="form-control btn btn-primary" type="submit">Upload</button>
+                            </div>
+                            <br>
+                            <div style="background-color: #AED6F1; height:10%;">
+                                <label style="margin-left: 2%; margin-top:2%; margin-bottom:2%; width: 70%">Uploaded File</label>
+                                <label style="margin-left: 2%; margin-top:2%; margin-bottom:2%">Action</label>
+                            </div>
+                            <div style="width: 100%; background-color:#D6EAF8; height:auto;">
+                                <div>
+                                    <label style="width: 70%; margin-left:2%;">abcd.doc</label>
+                                    <button class="btn btn-danger" style="font-size: small;">Remove</button>
+                                </div>
+                                <div>
+                                    <label style="width: 70%; margin-left:2%;">adbfodfubd.jpg</label>
+                                    <button class="btn btn-danger" style="font-size: small;">Remove</button>
+                                </div>
+                                <div>
+                                    <label style="width: 70%; margin-left:2%;">dasfdswgds.png</label>
+                                    <button class="btn btn-danger" style="font-size: small;">Remove</button>
+                                </div>
+                                <div>
+                                    <label style="width: 70%; margin-left:2%;">segsegrhh.pdf</label>
+                                    <button class="btn btn-danger" style="font-size: small;">Remove</button>
+                                </div>
+
+                            </div>
+                            <div style="margin-top: 2%; margin-bottom: 2%;">
+
+                                <label>Task Completed (%)</label>
+                                <br>
+                                <input type="number" id="inputValue" value="40" wire:model="progressinput"/>
+                                <br>
+                                
+                                <label>Progress Bar</label>
+                                <div style="width: 60%;" id="statusBar"></div>
+
+
+
+
+                                <!-- <div id="progressbar" onmousedown="startDrag(event)">
+                                    <div id="progress"></div>
+                                </div>
+
+                                <div id="progressValue"></div>
+
+                                <input type="number" id="progressInputfeild" value="14" wire:model="progressinput"> -->
+
+
+
+
+
+                            </div>
+                            <div style="margin-top: 2%; margin-bottom: 2%;">
+                                <label>Report</label>
+                                <textarea class="form-control" placeholder="Sharing today's weekly report"></textarea>
+                            </div>
+
+
+
+
+                            <div class="mb-3 text-center">
+                                <button class="btn btn-secondary" onclick="empty()" id="close_update_Modal" type="button" data-bs-dismiss="modal">Close</button>
+                                <button class="btn btn-primary" type="submit">Submit </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    <!-- <script>
+        function updateStatusBar() {
+            // Get the input value
+            var inputValue = document.getElementById('inputValue').value;
+
+            // Get the status bar element
+            var statusBar = document.getElementById('statusBar');
+
+            // Set the width of the status bar based on the input value
+            statusBar.style.width = inputValue + '%';
+        }
+    </script> -->
+
+
+
+    <!-- <script>
+        var isDragging = false;
+
+        function startDrag(event) {
+            isDragging = true;
+            document.addEventListener('mousemove', handleDrag);
+            document.addEventListener('mouseup', stopDrag);
+            handleDrag(event);
+        }
+
+        function handleDrag(event) {
+            if (isDragging) {
+                var progressBar = document.getElementById('progressbar');
+                var progress = document.getElementById('progress');
+                var progressValue = document.getElementById('progressValue');
+
+                // Calculate the percentage of the dragged position relative to the progress bar width
+                var percentage = (event.clientX - progressBar.getBoundingClientRect().left) / progressBar.clientWidth * 100;
+
+                // Ensure the percentage is within the valid range (0 to 100)
+                percentage = Math.min(100, Math.max(0, percentage));
+
+                // Round the percentage to the nearest integer
+                var roundedPercentage = Math.round(percentage);
+
+                // Update the progress bar width and value
+                progress.style.width = roundedPercentage + '%';
+
+                // Update the progress value element
+                progressValue.textContent = 'Progress: ' + roundedPercentage + '%';
+
+                // Update the input field value
+                var newValue = roundedPercentage;
+
+                document.getElementById("progressInputfeild").value = newValue;
+            }
+        }
+
+        function stopDrag() {
+            isDragging = false;
+            document.removeEventListener('mousemove', handleDrag);
+            document.removeEventListener('mouseup', stopDrag);
+        }
+    </script> -->
+
+
+
+
+
+
+
+
 
     <script>
         $('.summernote').summernote({
@@ -537,5 +1006,32 @@
             button.click();
 
         });
+    </script>
+    <script>
+        window.addEventListener('close_update_Modal', event => {
+            console.log('Close modal event triggered');
+            var button = document.getElementById("close_update_Modal");
+            button.click();
+
+        });
+    </script>
+    <script>
+        function empty() {
+            var inputFields = document.querySelectorAll('input');
+            inputFields.forEach(function(inputField) {
+                inputField.value = '';
+            });
+
+            var inputFields = document.querySelectorAll('select');
+            inputFields.forEach(function(inputField) {
+                inputField.value = '';
+            });
+
+            var checkboxFields = document.querySelectorAll('input[type="checkbox"]');
+            checkboxFields.forEach(function(checkboxField) {
+                checkboxField.checked = false;
+            });
+
+        }
     </script>
 </div>

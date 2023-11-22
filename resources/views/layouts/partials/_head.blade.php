@@ -30,6 +30,8 @@
 <link href="{{ asset('assets/css/theme.min.css') }}" rel="stylesheet" id="style-default">
 <link href="{{ asset('assets/css/user-rtl.min.css') }}" rel="stylesheet" id="user-style-rtl">
 <link href="{{ asset('assets/css/user.min.css') }}" rel="stylesheet" id="user-style-default">
+
+<!-- custom css start  -->
 <style>
     #preview {
       margin-top: 20px;
@@ -57,6 +59,39 @@
       margin-right: 5px; /* Add margin between images */
     }
   </style>
+
+<style>
+        #statusBar {
+            max-width: 100%;
+            height: 20px;
+            background-color: #90e18b  ;
+            margin-top: 2px;
+        }
+    </style>
+
+
+   <style>
+        #progressbar {
+            width: 300px;
+            height: 20px;
+            border: 1px solid #ccc;
+            position: relative;
+            cursor: pointer;
+        }
+
+        #progress {
+            height: 100%;
+            background-color: #4CAF50;
+        }
+
+        #progressValue {
+            margin-top: 10px;
+        }
+    </style>
+
+
+
+  <!-- custom css end  -->
 <script>
     var isRTL = JSON.parse(localStorage.getItem('isRTL'));
     if (isRTL) {

@@ -290,15 +290,6 @@ $chat_sender_id = Auth::user()->email;
 
 
 
-
-
-
-
-
-
-
-
-
 <div>
     <div class="row g-3 mb-3">
         <div class="col-md-12">
@@ -314,7 +305,7 @@ $chat_sender_id = Auth::user()->email;
                     </div>
                     <div class="card-body d-flex flex-column justify-content-end">
                         <div>
-                            <input class="form-control" type="file" id="attachments" name="attachments" required>
+                            <input class="form-control" type="file" id="attachments" name="attachments" multiple required>
                             @error('attachments')
                             <x-alert type="danger" :$message />
                             @enderror

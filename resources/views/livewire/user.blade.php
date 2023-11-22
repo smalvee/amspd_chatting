@@ -166,7 +166,7 @@ if (Auth::user()->name == 'Super Admin') {
 
 
                             <div class="mb-3 text-center">
-                                <button class="btn btn-secondary" id="closeModalc" type="button" data-bs-dismiss="modal">Close</button>
+                                <button class="btn btn-secondary" onclick="empty()" id="closeModalc" type="button" data-bs-dismiss="modal">Close</button>
                                 <button class="btn btn-primary" type="submit">Submit </button>
                             </div>
                         </form>
@@ -261,7 +261,7 @@ if (Auth::user()->name == 'Super Admin') {
 <script>
     window.addEventListener('closeModalu', event => {
         console.log('Close modal event triggered');
-        var button = document.getElementById("close_button_u");
+        var button = document.getElementById("closeModalu");
         button.click();
 
     });

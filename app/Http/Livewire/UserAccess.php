@@ -159,6 +159,7 @@ class UserAccess extends Component
             'status' => $this->status,
 
         ]);
+        
 
         $this->reset([
             'default_access',

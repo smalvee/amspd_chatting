@@ -139,6 +139,7 @@ class User extends Component
         ]);
 
         $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => 'Successfully Edited!']);
+        $this->dispatchBrowserEvent('closeModalu');
     }
 
     // public function CloseModal()
