@@ -5,6 +5,7 @@ namespace App\Http\Livewire;
 use App\Models\ProjectWiseUserAccess;
 use App\Models\ProjectWiseUserInfo;
 use App\Models\SubmitTodo;
+use App\Models\SubmitTodoFile;
 use App\Models\TaskGroup;
 use App\Models\ToDo as ModelsToDo;
 use App\Models\ToDoCategory;
@@ -45,7 +46,12 @@ class ToDo extends Component
         $signature,
         $to_do_id,
         $progress,
-        $progressinput;
+        $progressinput,
+        $report,
+        $submit_attachment,
+        $file_name,
+        $fileName,
+        $uploaded_file;
 
 
     public $project;
@@ -417,7 +423,7 @@ class ToDo extends Component
             'hide_submission_information_status' => $this->hide_submission_information_status,
             // 'remark_display_status'=> $this->remark_display_status,
         ]);
-        
+
         $this->dispatchBrowserEvent('close_update_Modal');
         $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => 'Successfully Updated!']);
     }
@@ -427,51 +433,136 @@ class ToDo extends Component
 
     public function show_data_on_submit_modal(int $to_do_id)
     {
+        $this->to_do_id = $to_do_id;
 
+        $to_do_find = SubmitTodo::where('to_do_id', $to_do_id)->first();
+
+        if ($to_do_find) {
+
+            $this->progressinput = $to_do_find->progress;
+            $this->report = $to_do_find->report;
+            $this->uploaded_file = SubmitTodoFile::where('to_do_id', $to_do_id)->get();
+
+
+            // dd($progress);
+        } else {
+            $this->progressinput = null;
+            $this->report = null;
+        }
     }
+
+
+
+
 
     public function updateProgress()
     {
-
-
         $validated_data = $this->validate([
-            'progressinput' => 'nullable|number'
+            'progressinput' => 'nullable|numeric',
+            'report' => 'string|max:500',
+            // 'submit_attachment' => 'file'
         ]);
 
-        dd($this->progressinput);
-        // Save the progress value to the database
-        // SubmitTodo::create(['value' => $this->progressValue]);
+        $to_do_check = SubmitTodo::where('to_do_id', $this->to_do_id)->first();
 
-        // You can also perform additional logic here if needed
+        if (!$to_do_check) {
 
-        // Reset the progress value
-        // $this->progressValue = 0;
+            // Create operation ----------------------------------------------------------------------
+            $action_creatre = SubmitTodo::create([
+
+                'to_do_id' => $this->to_do_id,
+                'progress' => $this->progressinput,
+                'report' => $this->report
+            ]);
+
+            if ($this->submit_attachment) {
+                // store file
+                foreach ($this->submit_attachment as $file) {
+                    // Generate a unique filename based on the current timestamp and store it in local storage
+                    $filename = time() . '_' . $file->getClientOriginalName();
+                    $file->storeAs('public/to_do_file', $filename); // Corrected variable name
+
+                    // Save file to the database or perform any other necessary actions
+
+                    $file_upload = SubmitTodoFile::create([
+                        'to_do_id' => $this->to_do_id,
+                        'file_name' => $filename
+                    ]);
+                }
+                
+
+                if ($file_upload) {
+                    $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => 'Successfully File Upload !']);
+                }
+            }
+
+            // dd($this->submit_attachment);
+            // Reset the file input
+            $this->submit_attachment = [];
+
+
+
+
+
+
+            if ($action_creatre) {
+                $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => 'Successfully created !']);
+            } else {
+                $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => 'Something went wrong created !']);
+            }
+        } else {
+
+
+
+            // update operation----------------------------------------------------------------
+            $action_update = SubmitTodo::where('to_do_id', $this->to_do_id)->update([
+
+                'progress' => $this->progressinput,
+                'report' => $this->report
+            ]);
+
+
+            if ($this->submit_attachment) {
+                // store file
+                foreach ($this->submit_attachment as $file) {
+                    // Generate a unique filename based on the current timestamp and store it in local storage
+                    $filename = time() . '_' . $file->getClientOriginalName();
+                    $file->storeAs('public/to_do_file', $filename); // Corrected variable name
+
+                    // Save file to the database or perform any other necessary actions
+
+                    $file_upload = SubmitTodoFile::create([
+                        'to_do_id' => $this->to_do_id,
+                        'file_name' => $filename
+                    ]);
+                }
+                if ($file_upload) {
+                    $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => 'Successfully File Upload !']);
+                }
+            }
+            // Reset the file input
+            $this->submit_attachment = [];
+            $this->dispatchBrowserEvent('resetFileInput');
+
+            if ($action_update) {
+                $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => 'Successfully Updated 2 !']);
+            } else {
+                $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => 'Something went wrong created !']);
+            }
+        }
     }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     public function delete($id)
     {
         ModelsToDo::findOrFail($id)->delete();
+        $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => 'Successfully deleted !']);
+    }
+
+
+    public function delete_submit_form_file($id)
+    {
+        SubmitTodoFile::findOrFail($id)->delete();
         $this->dispatchBrowserEvent('alert', ['type' => 'success',  'message' => 'Successfully deleted !']);
     }
 }

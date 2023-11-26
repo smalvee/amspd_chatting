@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('submit_todos', function (Blueprint $table) {
+        Schema::create('submit_todo_files', function (Blueprint $table) {
             $table->id();
             $table->string('to_do_id');
-            $table->string('progress');
-            $table->string('report');
+            $table->string('file_name');
             $table->timestamps();
         });
     }
@@ -25,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('submit_todos');
+        Schema::dropIfExists('submit_todo_files');
     }
 };

@@ -2,8 +2,10 @@
 
     <?php
 
+    use App\Models\SubmitTodoFile;
     use Illuminate\Support\Facades\Auth;
     use Illuminate\Support\Facades\DB;
+
 
     // dd($access);
     if ($access_permission == 'User' && $access == null) {
@@ -89,6 +91,17 @@
         }
 
         #droap-area {
+            margin: 10px 0;
+            padding: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            border: 3px dotted #a3a3a3;
+            border-radius: 5px;
+        }
+
+        #droap_area_for_submit_file {
             margin: 10px 0;
             padding: 30px;
             display: flex;
@@ -832,17 +845,18 @@
                                     </div>
                                 </div>
                             </div>
+                            <input type="hidden" wire:model="to_do_id" required>
                             <br>
                             <div class="card-body d-flex flex-column justify-content-end">
                                 <div>
-                                    <input class="form-control" id="droap-area" type="file" wire:model="submit_attachment" multiple>
+                                    <input class="form-control" id="droap_area_for_submit_file" type="file" wire:model="submit_attachment" multiple>
                                     @error('attachments')
                                     <x-alert type="danger" :$message />
                                     @enderror
                                 </div>
-                                <div id="preview"></div>
+                                <!-- <div id="preview"></div> -->
 
-                                <button class="form-control btn btn-primary" type="submit">Upload</button>
+
                             </div>
                             <br>
                             <div style="background-color: #AED6F1; height:10%;">
@@ -850,45 +864,35 @@
                                 <label style="margin-left: 2%; margin-top:2%; margin-bottom:2%">Action</label>
                             </div>
                             <div style="width: 100%; background-color:#D6EAF8; height:auto;">
+
+
+                                <?php
+
+                                $uploaded_file = SubmitTodoFile::where('to_do_id', $to_do_id)->get();
+
+
+                                ?>
+
+                                @foreach($uploaded_file as $file)
                                 <div>
-                                    <label style="width: 70%; margin-left:2%;">abcd.doc</label>
-                                    <button class="btn btn-danger" style="font-size: small;">Remove</button>
+                                    <label style="width: 70%; margin-left:2%;">
+                                    <a target="_blank" href="{{ Storage::url('public/to_do_file/' . $file->file_name) }}">{{$file->file_name}}</a></label>
+                                    <h5 class="btn btn-danger" style="font-size: small;" onclick="confirm('Are you sure?') || event.stopImmediatePropagation()" wire:click="delete_submit_form_file('{{ $file->id }}')">Remove</h5>
+
                                 </div>
-                                <div>
-                                    <label style="width: 70%; margin-left:2%;">adbfodfubd.jpg</label>
-                                    <button class="btn btn-danger" style="font-size: small;">Remove</button>
-                                </div>
-                                <div>
-                                    <label style="width: 70%; margin-left:2%;">dasfdswgds.png</label>
-                                    <button class="btn btn-danger" style="font-size: small;">Remove</button>
-                                </div>
-                                <div>
-                                    <label style="width: 70%; margin-left:2%;">segsegrhh.pdf</label>
-                                    <button class="btn btn-danger" style="font-size: small;">Remove</button>
-                                </div>
+                                @endforeach
+
 
                             </div>
                             <div style="margin-top: 2%; margin-bottom: 2%;">
 
                                 <label>Task Completed (%)</label>
                                 <br>
-                                <input type="number" id="inputValue" value="40" wire:model="progressinput"/>
+                                <input wire:model="progressinput" />
                                 <br>
-                                
+
                                 <label>Progress Bar</label>
-                                <div style="width: 60%;" id="statusBar"></div>
-
-
-
-
-                                <!-- <div id="progressbar" onmousedown="startDrag(event)">
-                                    <div id="progress"></div>
-                                </div>
-
-                                <div id="progressValue"></div>
-
-                                <input type="number" id="progressInputfeild" value="14" wire:model="progressinput"> -->
-
+                                <div style="width: <?php echo $progressinput ?>% " id="statusBar"></div>
 
 
 
@@ -896,15 +900,22 @@
                             </div>
                             <div style="margin-top: 2%; margin-bottom: 2%;">
                                 <label>Report</label>
-                                <textarea class="form-control" placeholder="Sharing today's weekly report"></textarea>
+                                <textarea class="form-control" placeholder="Sharing today's weekly report" wire:model="report"></textarea>
                             </div>
 
 
 
 
                             <div class="mb-3 text-center">
+
                                 <button class="btn btn-secondary" onclick="empty()" id="close_update_Modal" type="button" data-bs-dismiss="modal">Close</button>
+
+
+
                                 <button class="btn btn-primary" type="submit">Submit </button>
+
+
+
                             </div>
                         </form>
                     </div>
@@ -914,72 +925,13 @@
     </div>
     @endif
 
-    <!-- <script>
-        function updateStatusBar() {
-            // Get the input value
-            var inputValue = document.getElementById('inputValue').value;
-
-            // Get the status bar element
-            var statusBar = document.getElementById('statusBar');
-
-            // Set the width of the status bar based on the input value
-            statusBar.style.width = inputValue + '%';
-        }
-    </script> -->
-
-
-
-    <!-- <script>
-        var isDragging = false;
-
-        function startDrag(event) {
-            isDragging = true;
-            document.addEventListener('mousemove', handleDrag);
-            document.addEventListener('mouseup', stopDrag);
-            handleDrag(event);
-        }
-
-        function handleDrag(event) {
-            if (isDragging) {
-                var progressBar = document.getElementById('progressbar');
-                var progress = document.getElementById('progress');
-                var progressValue = document.getElementById('progressValue');
-
-                // Calculate the percentage of the dragged position relative to the progress bar width
-                var percentage = (event.clientX - progressBar.getBoundingClientRect().left) / progressBar.clientWidth * 100;
-
-                // Ensure the percentage is within the valid range (0 to 100)
-                percentage = Math.min(100, Math.max(0, percentage));
-
-                // Round the percentage to the nearest integer
-                var roundedPercentage = Math.round(percentage);
-
-                // Update the progress bar width and value
-                progress.style.width = roundedPercentage + '%';
-
-                // Update the progress value element
-                progressValue.textContent = 'Progress: ' + roundedPercentage + '%';
-
-                // Update the input field value
-                var newValue = roundedPercentage;
-
-                document.getElementById("progressInputfeild").value = newValue;
-            }
-        }
-
-        function stopDrag() {
-            isDragging = false;
-            document.removeEventListener('mousemove', handleDrag);
-            document.removeEventListener('mouseup', stopDrag);
-        }
-    </script> -->
-
-
-
-
-
-
-
+    <script>
+        Livewire.on('resetFileInput', () => {
+            let input = document.getElementById('droap_area_for_submit_file');
+            input.type = 'text';
+            input.type = 'file';
+        });
+    </script>
 
 
     <script>
@@ -1032,6 +984,62 @@
                 checkboxField.checked = false;
             });
 
+            var inputFields = document.querySelectorAll('input[type="file"]');
+            inputFields.forEach(function(inputField) {
+                inputField.value = '';
+            });
+
         }
     </script>
 </div>
+
+<!-- <script>
+    document.getElementById('droap_area_for_submit_file').addEventListener('change', handleFileSelect);
+
+    function handleFileSelect(event) {
+        const files = event.target.files;
+
+        if (files.length === 0) {
+            return;
+        }
+
+        const previewContainer = document.getElementById('preview');
+        previewContainer.innerHTML = ''; // Clear previous previews
+
+        for (const file of files) {
+            const previewElement = document.createElement('div');
+            previewElement.className = 'file-preview';
+
+            // Check if the file type is an image (jpg or png)
+            if (file.type.startsWith('image/')) {
+                const previewImage = document.createElement('img');
+                previewImage.className = 'preview-image';
+                previewImage.src = URL.createObjectURL(file);
+                previewElement.appendChild(previewImage);
+            } else {
+                // Display a generic file icon for other file types
+                const fileIcon = document.createElement('img');
+                fileIcon.className = 'file-icon';
+                fileIcon.src = getFileIcon(file.type);
+                previewElement.appendChild(fileIcon);
+
+                const fileName = document.createElement('span');
+                fileName.textContent = file.name;
+                previewElement.appendChild(fileName);
+            }
+
+            previewContainer.appendChild(previewElement);
+        }
+    }
+
+    function getFileIcon(fileType) {
+        // Replace these icons with your own or use a library for more options
+        switch (fileType) {
+            case 'application/pdf':
+                return 'pdf-icon.png'; // Replace with your PDF icon
+                // Add more cases for different file types
+            default:
+                return 'generic-file-icon.png'; // Replace with a generic file icon
+        }
+    }
+</script> -->

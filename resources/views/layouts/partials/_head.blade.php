@@ -34,64 +34,68 @@
 <!-- custom css start  -->
 <style>
     #preview {
-      margin-top: 20px;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: flex-start;
-      gap: 10px; /* Adjust the gap between images */
+        margin-top: 20px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        gap: 10px;
+        /* Adjust the gap between images */
     }
 
     .file-preview {
-      display: flex;
-      align-items: center;
-      margin-bottom: 5px;
+        display: flex;
+        align-items: center;
+        margin-bottom: 5px;
     }
 
     .file-icon {
-      width: 30px;
-      height: 30px;
-      margin-right: 10px;
+        width: 30px;
+        height: 30px;
+        margin-right: 10px;
     }
 
     .preview-image {
-      max-width: 200px; /* Adjust the width of each image */
-      max-height: 200px; /* Adjust the height of each image */
-      margin-right: 5px; /* Add margin between images */
+        max-width: 200px;
+        /* Adjust the width of each image */
+        max-height: 200px;
+        /* Adjust the height of each image */
+        margin-right: 5px;
+        /* Add margin between images */
     }
-  </style>
+</style>
 
 <style>
-        #statusBar {
-            max-width: 100%;
-            height: 20px;
-            background-color: #90e18b  ;
-            margin-top: 2px;
-        }
-    </style>
+    #statusBar {
+        max-width: 100%;
+        height: 20px;
+        background-color: #90e18b;
+        margin-top: 2px;
+    }
+</style>
 
 
-   <style>
-        #progressbar {
-            width: 300px;
-            height: 20px;
-            border: 1px solid #ccc;
-            position: relative;
-            cursor: pointer;
-        }
+<style>
+    #progressbar {
+        width: 300px;
+        height: 20px;
+        border: 1px solid #ccc;
+        position: relative;
+        cursor: pointer;
+    }
 
-        #progress {
-            height: 100%;
-            background-color: #4CAF50;
-        }
+    #progress {
+        height: 100%;
+        background-color: #4CAF50;
+    }
 
-        #progressValue {
-            margin-top: 10px;
-        }
-    </style>
+    #progressValue {
+        margin-top: 10px;
+    }
+</style>
 
 
 
-  <!-- custom css end  -->
+<!-- custom css end  -->
 <script>
     var isRTL = JSON.parse(localStorage.getItem('isRTL'));
     if (isRTL) {

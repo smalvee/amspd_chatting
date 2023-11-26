@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class SubmitTodo extends Model
+class SubmitTodoFile extends Model
 {
     use HasFactory;
 
