@@ -84,7 +84,7 @@ class Chatting extends Component
 
     public function submit()
     {
-        $user_name = Auth::user()->name;
+        $user_name = Auth::user()->email;
         $this->validate([
             'chat_details' => 'required',
             // 'to_do_id' => 'required',

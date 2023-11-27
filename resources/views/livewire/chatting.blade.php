@@ -141,7 +141,7 @@ $chat_sender_id = Auth::user()->email;
                                     @foreach($chat as $item)
 
 
-                                    @if($item->user_id != Auth::user()->name)
+                                    @if($item->user_id != Auth::user()->email)
                                     <!-- chat of other user start -->
                                     <div class="d-flex p-3">
                                         <div class="avatar avatar-l me-2">
@@ -151,7 +151,7 @@ $chat_sender_id = Auth::user()->email;
                                             <div class="w-xxl-75">
                                                 <div class="text-400 fs--2"><span>{{ $item->user_id }}</span></div>
                                                 <div class="hover-actions-trigger d-flex align-items-center">
-                                                    <div class="chat-message bg-200 p-2 rounded-2">{{ $item->chat_details }}
+                                                    <div class="chat-message bg-200 p-2 rounded-2">{{ $item->chat_details }}....
                                                         <br>
 
                                                         @if($item->attachments != null)
@@ -163,7 +163,7 @@ $chat_sender_id = Auth::user()->email;
 
                                                         @if (in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif', 'bmp']))
                                                         {{-- Display an image --}}
-                                                        <img src="{{ Storage::url('public/chat_file/' . $item->attachments) }}" alt="Image">
+                                                        <img width="50%" height="50%" src="{{ Storage::url('public/chat_file/' . $item->attachments) }}" alt="Image">
                                                         <br>
 
                                                         @elseif (in_array($fileExtension, ['pdf']))
@@ -198,7 +198,9 @@ $chat_sender_id = Auth::user()->email;
                                     <!-- chat of other user end -->
                                     @endif
 
-                                    @if($item->user_id == Auth::user()->name)
+
+
+                                    @if($item->user_id == Auth::user()->email)
                                     <!-- chat of Loged in user Start -->
                                     <div class="d-flex p-3">
                                         <div class="flex-1 d-flex justify-content-end">
@@ -223,7 +225,7 @@ $chat_sender_id = Auth::user()->email;
 
                                                         @if (in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif', 'bmp']))
                                                         {{-- Display an image --}}
-                                                        <img src="{{ Storage::url('public/chat_file/' . $item->attachments) }}" alt="Image">
+                                                        <img width="50%" height="50%" src="{{ Storage::url('public/chat_file/' . $item->attachments) }}" alt="Image">
                                                         <br>
 
                                                         @elseif (in_array($fileExtension, ['pdf']))
