@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('task_group_id');
             $table->string('user_id');
+            $table->string('project_id');
             $table->string('status');
             $table->string('created_by');
             $table->timestamps();
