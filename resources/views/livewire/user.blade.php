@@ -32,6 +32,33 @@ if (Auth::user()->name == 'Super Admin') {
 // dd($Access_permission); 
 
 
+$module_id = null;
+$create = null;
+$read = null;
+$update = null;
+$delete = null;
+
+if($access)
+{
+    foreach ($access as $acs) {
+        if ($acs->module_id == 5) {
+            $module_id = 5;
+            $create = $acs->create;
+            $read = $acs->read;
+            $update = $acs->update;
+            $delete = $acs->delete;
+
+            break;
+        }
+    }
+}
+
+// dd($delete);
+
+
+
+
+
 ?>
 
 
@@ -88,13 +115,17 @@ if (Auth::user()->name == 'Super Admin') {
                                     <td class="text-nowrap">
                                         {{ $user->status }}
                                     </td>
-                                    @admin
+                                    
                                     <td class="text-nowrap">
+                                        @if($access_permission == 'Super Admin' || $access_permission == 'Admin' || ($module_id == '5' && $update == '1'))
                                         <button type="button" wire:click="Edit_modal({{$user->id}})" class="btn btn-falcon-primary btn-sm" data-bs-toggle="modal" data-bs-target="#update_modal">Edit</button>
+                                        @endif
+                                        @if($access_permission == 'Super Admin' || $access_permission == 'Admin' || ($module_id == '5' && $delete == '1'))
                                         <button class="btn btn-falcon-danger btn-sm" onclick="confirm('Are you sure?') || event.stopImmediatePropagation()" wire:click="delete('{{ $user->id }}')">Delete</button>
+                                        @endif
 
                                     </td>
-                                    @endadmin
+                                    
                                     @endforeach
                                 </tr>
                                 @endforeach
@@ -108,7 +139,7 @@ if (Auth::user()->name == 'Super Admin') {
 
 
     {{-- Create --}}
-    @admin
+    @if($access_permission == 'Super Admin' || $access_permission == 'Admin' || ($module_id == '5' && $create == '1'))
     <div wire:ignore.self class="modal fade" id="create_and_edit_modal">
         <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 500px">
             <div class="modal-content position-relative">
@@ -175,12 +206,12 @@ if (Auth::user()->name == 'Super Admin') {
             </div>
         </div>
     </div>
-    @endadmin
+    @endif
 
 
 
     {{-- Update Modal --}}
-    @admin
+    @if($access_permission == 'Super Admin' || $access_permission == 'Admin' || ($module_id == '5' && $update == '1'))
     <div wire:ignore.self class="modal fade" id="update_modal">
         <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 500px">
             <div class="modal-content position-relative">
@@ -247,7 +278,7 @@ if (Auth::user()->name == 'Super Admin') {
             </div>
         </div>
     </div>
-    @endadmin
+    @endif
 </div>
 
 <script>
@@ -278,7 +309,7 @@ if (Auth::user()->name == 'Super Admin') {
             inputField.value = '';
         });
 
-       
+
 
     }
 </script>

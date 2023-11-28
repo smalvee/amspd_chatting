@@ -104,7 +104,9 @@ $chat_sender_id = Auth::user()->email;
                                     <div class="col-auto">
                                         <a href="{{ route('chat-file', $to_do_id_chat) }}">
                                             <button class="btn btn-sm btn-falcon-primary btn-chat-info" type="button" title="Conversation File Information">
-                                                <span class="fas fa-info"></span>
+                                                <span class="fas fa-paperclip"></span>
+                                                <!-- <span class="fas fa-info"></span> -->
+
                                             </button>
                                         </a>
 
@@ -271,10 +273,10 @@ $chat_sender_id = Auth::user()->email;
                         <form wire:submit.prevent='submit' class="chat-editor-area">
                             <!-- <div class="emojiarea-editor outline-none scrollbar" contenteditable="true"></div> -->
                             <input class="emojiarea-editor outline-none scrollbar" id="chat_details" wire:model='chat_details' type="text" contenteditable="true" style="border: none;">
-                            <input class="d-none" type="file" id="chat-file-upload" wire:model="attachments" />
+                            <!-- <input class="d-none" type="file" id="chat-file-upload" wire:model="attachments" />
                             <label class="chat-file-upload cursor-pointer" for="chat-file-upload">
                                 <span class="fas fa-paperclip"></span>
-                            </label>
+                            </label> -->
                             <!-- <div class="btn btn-link emoji-icon" data-picmo="data-picmo" data-picmo-input-target=".emojiarea-editor">
                                 <span class="far fa-laugh-beam"></span>
                             </div> -->
@@ -293,6 +295,18 @@ $chat_sender_id = Auth::user()->email;
 
 
 <div>
+<style>
+    #attachments {
+            margin: 10px 0;
+            padding: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            border: 3px dotted #a3a3a3;
+            border-radius: 5px;
+        }
+</style>
     <div class="row g-3 mb-3">
         <div class="col-md-12">
             <div class="card">
@@ -307,11 +321,12 @@ $chat_sender_id = Auth::user()->email;
                     </div>
                     <div class="card-body d-flex flex-column justify-content-end">
                         <div>
-                            <input class="form-control" type="file" id="attachments" name="attachments" multiple required>
+                            <input class="form-control" type="file" id="attachments" name="attachments" required>
                             @error('attachments')
                             <x-alert type="danger" :$message />
                             @enderror
                         </div>
+                        
                         <div id="preview"></div>
 
                         <button class="form-control btn btn-primary" type="submit">Send</button>

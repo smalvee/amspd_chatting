@@ -35,7 +35,7 @@ class TaskGroup extends Component
         $loggedin_id = Auth::user()->id;
 
         if ($access_permission == 'User' || $access_permission == 'Admin') {
-            $access = ProjectWiseUserAccess::where('user_id', Auth::user()->id)->where('project_id', $this->project->id)->first();
+            $access = ProjectWiseUserAccess::where('user_id', Auth::user()->id)->where('project_id', $this->project->id)->get();
         }
 
 

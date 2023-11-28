@@ -14,6 +14,30 @@
     }
 
     $loged_in_id = Auth::user()->id;
+    $module_id = null;
+    $create = null;
+    $read = null;
+    $update = null;
+    $delete = null;
+
+    if($access)
+    {
+        foreach ($access as $acs) {
+            if ($acs->module_id == 6) {
+                $module_id = 6;
+                $create = $acs->create;
+                $read = $acs->read;
+                $update = $acs->update;
+                $delete = $acs->delete;
+    
+                break;
+            }
+        }
+    }
+
+    
+
+    // dd($delete);
 
 
     ?>
@@ -240,13 +264,13 @@
 
 
 
-                                                @if($access_permission == 'Super Admin' || $access_permission == 'Admin' || $access->module_id == '6' && $access->update == '1')
+                                                @if($access_permission == 'Super Admin' || $access_permission == 'Admin' || $module_id == '6' && $update == '1')
                                                 <button type="button" wire:click="Edit_modal({{$todo->id}})" class="btn btn-falcon-primary btn-sm" data-bs-toggle="modal" data-bs-target="#update_modal">Edit</button>
                                                 @endif
 
                                                 <button type="button" wire:click="show_data_on_submit_modal({{$todo->id}})" class="btn btn-falcon-warning btn-sm" data-bs-toggle="modal" data-bs-target="#submit_modal">Submit</button>
 
-                                                @if($access_permission == 'Super Admin' || $access_permission == 'Admin' || $access->module_id == '6' && $access->delete == '1')
+                                                @if($access_permission == 'Super Admin' || $access_permission == 'Admin' || $module_id == '6' && $delete == '1')
                                                 <button class="btn btn-falcon-danger btn-sm" onclick="confirm('Are you sure?') || event.stopImmediatePropagation()" wire:click="delete('{{ $todo->id }}')">Delete</button>
                                                 @endif
                                             </td>
@@ -266,7 +290,7 @@
 
 
     {{-- Create || Update Modal --}}
-    @if($access_permission == 'Super Admin' || $access_permission == 'Admin' || ($access->module_id == '6' && $access->create == '1'))
+    @if($access_permission == 'Super Admin' || $access_permission == 'Admin' || ($module_id == '6' && $create == '1'))
 
     <div wire:ignore.self class="modal fade" id="create_and_edit_modal">
         <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 800px">
@@ -545,7 +569,7 @@
 
     {{-- Update || Update Modal --}}
 
-    @if($access_permission == 'Super Admin' || $access_permission == 'Admin' || $access->module_id == '6' && $access->update == '1')
+    @if($access_permission == 'Super Admin' || $access_permission == 'Admin' || $module_id == '6' && $update == '1')
 
     <div wire:ignore.self class="modal fade" id="update_modal">
         <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 800px">
@@ -822,7 +846,7 @@
 
     {{-- submit_modal || Update Modal --}}
 
-    @if($access_permission == 'Super Admin' || $access_permission == 'Admin' || $access->module_id == '6' && $access->update == '1')
+    @if($access_permission == 'Super Admin' || $access_permission == 'Admin' || $module_id == '6' && $update == '1')
 
     <div wire:ignore.self class="modal fade" id="submit_modal">
         <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 800px">
@@ -876,7 +900,7 @@
                                 @foreach($uploaded_file as $file)
                                 <div>
                                     <label style="width: 70%; margin-left:2%;">
-                                    <a target="_blank" href="{{ Storage::url('public/to_do_file/' . $file->file_name) }}">{{$file->file_name}}</a></label>
+                                        <a target="_blank" href="{{ Storage::url('public/to_do_file/' . $file->file_name) }}">{{$file->file_name}}</a></label>
                                     <h5 class="btn btn-danger" style="font-size: small;" onclick="confirm('Are you sure?') || event.stopImmediatePropagation()" wire:click="delete_submit_form_file('{{ $file->id }}')">Remove</h5>
 
                                 </div>

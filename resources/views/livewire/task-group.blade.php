@@ -27,6 +27,31 @@ $results = ProjectWiseUserInfo::where('project_id', $p_id)->whereNotIn('user_id'
     ->get();
 
 $results1 = TaskGroupWiseUserList::where('task_group_id', $task)->get();
+
+
+
+$module_id = null;
+$create = null;
+$read = null;
+$update = null;
+$delete = null;
+
+if($access)
+{
+    foreach ($access as $acs) {
+        if ($acs->module_id == 7) {
+            $module_id = 7;
+            $create = $acs->create;
+            $read = $acs->read;
+            $update = $acs->update;
+            $delete = $acs->delete;
+
+            break;
+        }
+    }
+}
+
+// dd($delete);
 ?>
 
 
@@ -68,14 +93,20 @@ $results1 = TaskGroupWiseUserList::where('task_group_id', $task)->get();
                                     <td class="text-nowrap">
                                         {{ $group->name }}
                                     </td>
-                                    @admin
+                                    
                                     <td class="text-nowrap">
                                         <!-- <button class="btn btn-falcon-primary btn-sm">Edit</button>  -->
+                                        @if($access_permission == 'Super Admin' || $access_permission == 'Admin' || ($module_id == '7' && $create == '1'))
                                         <button type="button" wire:click="Open_add_user_modal({{$group->id}})" class="btn btn-falcon-primary btn-sm" data-bs-toggle="modal" data-bs-target="#add_user_modal">User Add/Remove</button>
+                                        @endif
+                                        @if($access_permission == 'Super Admin' || $access_permission == 'Admin' || ($module_id == '7' && $update == '1'))
                                         <button type="button" wire:click="Edit_modal({{$group->id}})" class="btn btn-falcon-primary btn-sm" data-bs-toggle="modal" data-bs-target="#update_modal">Edit</button>
+                                        @endif
+                                        @if($access_permission == 'Super Admin' || $access_permission == 'Admin' || ($module_id == '7' && $delete == '1'))
                                         <button class="btn btn-falcon-danger btn-sm" onclick="confirm('Are you sure?') || event.stopImmediatePropagation()" wire:click="delete('{{ $group->id }}')">Delete</button>
+                                        @endif
                                     </td>
-                                    @endadmin
+                                    
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -91,7 +122,7 @@ $results1 = TaskGroupWiseUserList::where('task_group_id', $task)->get();
 
 
     {{-- Create || Update Modal --}}
-    @admin
+    @if($access_permission == 'Super Admin' || $access_permission == 'Admin' || ($module_id == '7' && $create == '1'))
     <div wire:ignore.self class="modal fade" id="create_and_edit_modal">
         <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 500px">
             <div class="modal-content position-relative">
@@ -120,11 +151,11 @@ $results1 = TaskGroupWiseUserList::where('task_group_id', $task)->get();
             </div>
         </div>
     </div>
-    @endadmin
+    @endif
 
 
     {{-- add_user_modal || Update Modal --}}
-    @admin
+    @if($access_permission == 'Super Admin' || $access_permission == 'Admin' || ($module_id == '7' && $create == '1'))
     <div wire:ignore.self class="modal fade" id="add_user_modal">
         <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 500px">
             <div class="modal-content position-relative">
@@ -152,9 +183,9 @@ $results1 = TaskGroupWiseUserList::where('task_group_id', $task)->get();
                                         <tr>
 
                                             <th scope="col">Email</th>
-                                            @admin
+                                            
                                             <th scope="col">Action</th>
-                                            @endadmin
+                                            
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -167,11 +198,11 @@ $results1 = TaskGroupWiseUserList::where('task_group_id', $task)->get();
                                             <td class="text-nowrap">
                                                 {{ $result2 }}
                                             </td>
-                                            @admin
+                                            
                                             <td class="text-nowrap">
                                                 <button class="btn btn-falcon-danger btn-sm" onclick="confirm('Are you sure?') || event.stopImmediatePropagation()" wire:click="Remove_user('{{ $group->id }}')">Remove</button>
                                             </td>
-                                            @endadmin
+                                            
                                         </tr>
                                         @endforeach
                                     </tbody>
@@ -200,11 +231,11 @@ $results1 = TaskGroupWiseUserList::where('task_group_id', $task)->get();
             </div>
         </div>
     </div>
-    @endadmin
+    @endif
 
 
     {{-- update || Update Modal --}}
-    @admin
+    @if($access_permission == 'Super Admin' || $access_permission == 'Admin' || ($module_id == '7' && $update == '1'))
     <div wire:ignore.self class="modal fade" id="update_modal">
         <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 500px">
             <div class="modal-content position-relative">
@@ -234,7 +265,7 @@ $results1 = TaskGroupWiseUserList::where('task_group_id', $task)->get();
             </div>
         </div>
     </div>
-    @endadmin
+    @endif
 </div>
 
 

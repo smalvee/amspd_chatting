@@ -43,6 +43,8 @@ class UserAccess extends Component
         //     $access = ProjectWiseUserAccess::where('user_id', Auth::user()->id)->where('project_id', $this->project->id)->first();
         // }
 
+        
+
 
         // dd($this->module_id);
         return view('livewire.user-access', [

@@ -69,13 +69,13 @@ class ToDo extends Component
 
 
 
-        $access = NULL;
+        $access = null;
 
         $access_permission = Auth::user()->type ?? null;
 
 
         if ($access_permission == 'User' || $access_permission == 'Admin') {
-            $access = ProjectWiseUserAccess::where('user_id', Auth::user()->id)->where('project_id', $this->project->id)->where('status', 1)->where('read', 1)->first();
+            $access = ProjectWiseUserAccess::where('user_id', Auth::user()->id)->where('project_id', $this->project->id)->where('status', 1)->where('read', 1)->get();
             if ($access == NULL) {
                 $access = null;
             }
